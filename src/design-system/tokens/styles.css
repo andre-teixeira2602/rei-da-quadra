@@ -1,0 +1,70 @@
+:root {
+  /* Arena theme (2026) */
+  --bg-0: #070b18; /* deep navy */
+  --bg-1: #0a122a;
+  --surface-0: #0e1b3d; /* hard court blue */
+  --surface-1: #122553;
+  --border-0: #223a6b;
+
+  --text-0: #f7f8ff; /* wimbledon white */
+  --text-1: rgba(247, 248, 255, 0.78);
+  --text-2: rgba(247, 248, 255, 0.6);
+
+  --primary-0: #e36a2e; /* clay orange */
+  --primary-1: #f07a3e;
+  --success-0: #2ee07b; /* grass green */
+  --danger-0: #ff4d5a;
+  --elite-0: #c7ff3d; /* tennis ball neon */
+
+  --shadow-1: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --shadow-2: 0 18px 48px rgba(0, 0, 0, 0.45);
+  --glow-elite: 0 0 0 1px rgba(199, 255, 61, 0.35), 0 0 22px rgba(199, 255, 61, 0.18);
+  --glow-win: 0 0 0 1px rgba(46, 224, 123, 0.25), 0 0 18px rgba(46, 224, 123, 0.14);
+
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 22px;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+
+  /* Back-compat vars used by current UI */
+  --bg: var(--bg-0);
+  --card: var(--surface-0);
+  --border: var(--border-0);
+  --clay: var(--primary-0);
+  --clayHover: var(--primary-1);
+  --grass: var(--success-0);
+  --grassLight: rgba(46, 224, 123, 0.12);
+  --tennisNeon: var(--elite-0);
+  --text: var(--text-0);
+  --danger: var(--danger-0);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: rgba(199, 255, 61, 0.22);
+}
+

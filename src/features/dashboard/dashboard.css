@@ -1,0 +1,526 @@
+.rqDashboard {
+  display: grid;
+  gap: var(--rq-s-3);
+  position: relative;
+}
+
+.rqDashboard::before {
+  content: '';
+  position: absolute;
+  inset: -24px -16px auto -16px;
+  height: 280px;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 220px at 50% 0%, rgba(247, 248, 255, 0.12), transparent 62%),
+    radial-gradient(700px 260px at 20% 0%, rgba(247, 248, 255, 0.08), transparent 65%),
+    radial-gradient(700px 260px at 85% 0%, rgba(247, 248, 255, 0.06), transparent 70%),
+    radial-gradient(900px 500px at 50% 0%, rgba(14, 27, 61, 0.55), transparent 70%);
+  opacity: 0.95;
+  filter: blur(0.2px);
+}
+
+.rqArenaHeader {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 10px 0 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.rqLeagueMark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--rq-text);
+  opacity: 0.92;
+}
+
+.rqLeagueCrown {
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.55));
+}
+
+.rqLeagueText {
+  letter-spacing: 6px;
+  font-size: var(--rq-caption);
+  font-weight: 900;
+}
+
+.rqArenaTitle {
+  font-size: clamp(26px, 5vw, 36px);
+  font-weight: 950;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+.rqArenaSub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  color: var(--rq-text-muted);
+}
+
+.rqMutedStrong {
+  color: color-mix(in srgb, var(--rq-text), transparent 12%);
+  font-weight: 850;
+}
+
+.rqDot {
+  opacity: 0.8;
+}
+
+.rqPlayerStrip {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: var(--rq-r-lg);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 20%);
+  background: color-mix(in srgb, var(--rq-surface-2), transparent 20%);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.rqPlayerStrip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(420px 140px at 20% 20%, rgba(247, 248, 255, 0.06), transparent 60%),
+    radial-gradient(420px 140px at 85% 0%, rgba(227, 106, 46, 0.06), transparent 65%);
+  opacity: 0.85;
+}
+
+.rqAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--rq-border), transparent 35%);
+  background: radial-gradient(circle at 30% 20%, rgba(199, 255, 61, 0.18), rgba(10, 18, 42, 0.65));
+  display: grid;
+  place-items: center;
+  font-weight: 950;
+  letter-spacing: 0.6px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+}
+
+.rqPlayerInfo {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  position: relative;
+}
+
+.rqPlayerName {
+  font-weight: 900;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rqPlayerMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rqDashboardHeader {
+  display: grid;
+  gap: 6px;
+  position: relative;
+  padding: 12px 0;
+}
+
+.rqDashboardHeader::before {
+  content: '';
+  position: absolute;
+  inset: -10px -8px;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 220px at 20% 0%, rgba(227, 106, 46, 0.08), transparent 55%),
+    radial-gradient(800px 220px at 85% 0%, rgba(46, 224, 123, 0.06), transparent 60%),
+    linear-gradient(180deg, rgba(247, 248, 255, 0.03), transparent 55%);
+  filter: saturate(1.05);
+  opacity: 0.95;
+}
+
+.rqDashboardTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rq-s-2);
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.rqDashboardTitle {
+  margin: 0;
+  font-size: var(--rq-h1);
+  letter-spacing: 0.2px;
+  font-weight: 920;
+}
+
+.rqDashboardMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--rq-s-1);
+  flex-wrap: wrap;
+}
+
+.rqSeasonPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--rq-caption);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 16%);
+  background: rgba(10, 18, 42, 0.55);
+  color: var(--rq-text-muted);
+}
+
+.rqRankingHero {
+  display: grid;
+  gap: var(--rq-s-2);
+}
+
+.rqHeroTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rq-s-2);
+}
+
+.rqHeroRankBlock {
+  display: grid;
+  gap: 6px;
+}
+
+.rqHeroLabel {
+  font-size: var(--rq-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--rq-text-muted);
+}
+
+.rqHeroRank {
+  font-size: 62px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.8px;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+
+.rqHeroCenter {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+
+.rqHeroSignals {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.rqSignal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--rq-caption);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 16%);
+  background: rgba(10, 18, 42, 0.55);
+  color: var(--rq-text);
+}
+
+.rqSignalSuccess {
+  border-color: rgba(46, 224, 123, 0.35);
+  background: rgba(46, 224, 123, 0.10);
+}
+
+.rqSignalDanger {
+  border-color: rgba(255, 77, 90, 0.30);
+  background: rgba(255, 77, 90, 0.08);
+}
+
+.rqHeroLine {
+  display: grid;
+  gap: 10px;
+}
+
+.rqCallout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--rq-r-lg);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 18%);
+  background: rgba(10, 18, 42, 0.38);
+  color: var(--rq-text);
+  text-align: center;
+}
+
+.rqCalloutIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 20%);
+  background: rgba(10, 18, 42, 0.55);
+  font-weight: 950;
+}
+
+.rqCalloutUp .rqCalloutIcon {
+  border-color: rgba(46, 224, 123, 0.30);
+}
+
+.rqCalloutDown .rqCalloutIcon {
+  border-color: rgba(255, 77, 90, 0.28);
+}
+
+.rqCalloutSafe .rqCalloutIcon {
+  border-color: rgba(46, 224, 123, 0.22);
+}
+
+.rqProgressLabel {
+  text-align: center;
+  font-size: var(--rq-caption);
+  color: var(--rq-text-muted);
+  margin-top: 2px;
+}
+
+.rqCtaRow {
+  display: grid;
+  place-items: center;
+  margin-top: 2px;
+}
+
+.rqCtaButton.rqBtn-primary {
+  min-width: min(420px, 100%);
+  padding: 12px 18px;
+  border-radius: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+}
+
+.rqCtaButton.rqBtn-primary:hover:not(:disabled) {
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.50);
+}
+
+.rqHeroText {
+  color: var(--rq-text-muted);
+  font-size: var(--rq-body);
+  line-height: 1.35;
+}
+
+.rqHeroProgressRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rq-s-2);
+  flex-wrap: wrap;
+}
+
+.rqHeroProgressMeta {
+  font-size: var(--rq-caption);
+  color: var(--rq-text-muted);
+}
+
+.rqDashboardGrid {
+  display: grid;
+  gap: var(--rq-s-3);
+}
+
+@media (min-width: 1024px) {
+  .rqDashboardGrid {
+    grid-template-columns: 1.35fr 1fr;
+    align-items: start;
+  }
+}
+
+.rqSectionTitle {
+  margin: 0;
+  font-size: var(--rq-h2);
+  letter-spacing: 0.2px;
+}
+
+.rqMatchRow {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--rq-r-lg);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 20%);
+  background: rgba(10, 18, 42, 0.35);
+}
+
+.rqMatchRow--arena {
+  position: relative;
+  overflow: hidden;
+}
+
+.rqMatchRow--arena::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(240px 120px at 90% 50%, rgba(199, 255, 61, 0.10), transparent 70%),
+    linear-gradient(90deg, transparent 70%, rgba(247, 248, 255, 0.02));
+  opacity: 0.8;
+}
+
+.rqDashboard .rqScoreBox {
+  width: 42px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(10, 18, 42, 0.60);
+  color: var(--rq-text);
+  border-color: color-mix(in srgb, var(--rq-border), transparent 18%);
+}
+
+.rqDashboard .rqScoreBox-win {
+  box-shadow: 0 0 0 2px rgba(46, 224, 123, 0.20);
+}
+
+.rqDashboard .rqScoreBox-loss {
+  box-shadow: 0 0 0 2px rgba(255, 77, 90, 0.18);
+}
+
+.rqMatchTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rq-s-2);
+}
+
+.rqMatchOpponent {
+  font-weight: 750;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rqResultPill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--rq-caption);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 14%);
+  color: var(--rq-text);
+}
+
+.rqResultWin {
+  border-color: rgba(46, 224, 123, 0.35);
+  background: rgba(46, 224, 123, 0.12);
+}
+
+.rqResultLoss {
+  border-color: rgba(255, 77, 90, 0.35);
+  background: rgba(255, 77, 90, 0.10);
+}
+
+.rqScoreLine {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* espaço entre grupos (sets) */
+  flex-wrap: wrap;
+}
+
+.rqSetGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* espaço entre (6 | 4) */
+}
+
+.rqEmpty {
+  color: var(--rq-text-muted);
+  font-size: var(--rq-body);
+}
+
+.rqRankingCard {
+  position: relative;
+  overflow: hidden;
+}
+
+.rqRankingCard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(227, 106, 46, 0.55), rgba(46, 224, 123, 0.25), transparent 70%);
+  opacity: 0.65;
+}
+
+.rqRankingCard::after {
+  content: '';
+  position: absolute;
+  inset: -40px -40px auto -40px;
+  height: 160px;
+  pointer-events: none;
+  background:
+    radial-gradient(600px 120px at 30% 0%, rgba(227, 106, 46, 0.10), transparent 60%),
+    radial-gradient(600px 120px at 75% 0%, rgba(46, 224, 123, 0.08), transparent 65%);
+  opacity: 0.65;
+}
+
+@media (min-width: 1024px) {
+  .rqDashboardTitle {
+    letter-spacing: 0.3px;
+  }
+}
+
+.rqAchievementRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rq-s-2);
+  flex-wrap: wrap;
+}
+
+.rqAchievementIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 18%);
+  background: rgba(199, 255, 61, 0.10);
+  display: grid;
+  place-items: center;
+  color: var(--rq-text);
+  box-shadow: 0 0 18px rgba(199, 255, 61, 0.08);
+}
+
+.rqAchievementText {
+  display: grid;
+  gap: 4px;
+}
+
+.rqAchievementTitle {
+  font-weight: 800;
+}
+
+.rqAchievementSub {
+  color: var(--rq-text-muted);
+  font-size: var(--rq-caption);
+}
+

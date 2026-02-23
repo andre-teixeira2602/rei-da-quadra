@@ -1,0 +1,82 @@
+.rqLogin {
+  display: grid;
+  gap: var(--rq-s-3);
+}
+
+.rqLoginHeader {
+  display: grid;
+  gap: 6px;
+}
+
+.rqLoginTitle {
+  margin: 0;
+  font-size: var(--rq-h1);
+  letter-spacing: 0.2px;
+  font-weight: 920;
+}
+
+.rqLoginCardWrap {
+  width: 100%;
+  display: grid;
+  justify-items: start;
+}
+
+.rqLoginCard {
+  width: 100%;
+  max-width: 520px;
+}
+
+.rqLoginActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.rqLoginLinks {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.rqLinkButton {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--rq-text-muted);
+  padding: 6px 4px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity: 0.92;
+}
+
+.rqLinkButton:hover {
+  color: var(--rq-text);
+}
+
+.rqLinkButton:focus-visible {
+  outline: 2px solid var(--rq-focus);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+.rqToastCard {
+  max-width: 520px;
+}
+
+@media (max-width: 480px) {
+  .rqLoginCardWrap {
+    justify-items: stretch;
+  }
+
+  .rqLoginActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .rqLoginActions .rqBtn {
+    width: 100%;
+  }
+}
+

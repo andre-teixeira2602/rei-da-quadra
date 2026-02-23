@@ -1,0 +1,55 @@
+.rqProfile {
+  display: grid;
+  gap: var(--rq-s-3);
+}
+
+.rqProfileHeader {
+  display: grid;
+  gap: 6px;
+}
+
+.rqProfileTitle {
+  margin: 0;
+  font-size: var(--rq-h1);
+  letter-spacing: 0.2px;
+  font-weight: 920;
+}
+
+.rqProfileCardWrap {
+  width: 100%;
+  display: grid;
+  justify-items: start;
+}
+
+.rqProfileCard {
+  width: 100%;
+  max-width: 520px;
+}
+
+.rqProfileSignedIn {
+  color: var(--rq-text-muted);
+  font-size: var(--rq-caption);
+}
+
+.rqProfileActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+@media (max-width: 480px) {
+  .rqProfileCardWrap {
+    justify-items: stretch;
+  }
+
+  .rqProfileActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .rqProfileActions .rqBtn {
+    width: 100%;
+  }
+}
+

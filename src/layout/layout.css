@@ -1,0 +1,193 @@
+.appRoot {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.appMain {
+  width: 100%;
+}
+
+.pageShell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .pageShell {
+    padding: 24px;
+  }
+}
+
+.dashboardGrid {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .dashboardGrid {
+    grid-template-columns: 1.2fr 1fr;
+    align-items: start;
+  }
+}
+
+.topBar {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topBarSticky {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--bg), transparent 14%);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topBarTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.iconButton {
+  border: 1px solid rgba(34, 58, 107, 0.9);
+  background: rgba(10, 18, 42, 0.55);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.iconButton:hover {
+  background: rgba(18, 37, 83, 0.7);
+}
+
+.iconButton:active {
+  transform: translateY(1px);
+}
+
+.bottomNav {
+  display: none;
+  position: sticky;
+  bottom: 0;
+  z-index: 45;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-1), transparent 8%);
+  backdrop-filter: blur(10px);
+  padding: 10px 12px;
+  gap: 8px;
+}
+
+.bottomNavList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.bottomNavLink {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  text-decoration: none;
+  opacity: 0.78;
+  padding: 8px 6px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+
+.bottomNavLinkActive {
+  opacity: 1;
+  border-color: rgba(227, 106, 46, 0.35);
+}
+
+.bottomNavLabel {
+  font-size: 11px;
+}
+
+.navDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--tennisNeon);
+  display: inline-block;
+  margin-left: 6px;
+}
+
+.stickyCta {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 44;
+  padding: 10px 12px;
+}
+
+.stickyCtaInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: color-mix(in srgb, var(--bg-1), transparent 6%);
+  border: 1px solid rgba(34, 58, 107, 0.85);
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: var(--shadow-2);
+}
+
+.ctaButton {
+  width: 100%;
+  border: 1px solid rgba(227, 106, 46, 0.45);
+  background: linear-gradient(180deg, rgba(240, 122, 62, 0.95), rgba(227, 106, 46, 0.9));
+  color: #fff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ctaButton:hover {
+  background: linear-gradient(180deg, rgba(245, 135, 83, 0.98), rgba(240, 122, 62, 0.92));
+}
+
+.ctaButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ctaButtonPrimary {
+  background: var(--clay);
+}
+
+.ctaButtonDanger {
+  background: var(--danger);
+}
+
+@media (max-width: 1023px) {
+  .bottomNav {
+    display: flex;
+  }
+
+  .appMain {
+    padding-bottom: 88px;
+  }
+
+  .stickyCta {
+    display: block;
+    bottom: 64px; /* acima do bottom nav */
+  }
+}
+
+@media (min-width: 1024px) {
+  .stickyCta {
+    display: none !important;
+  }
+}
+

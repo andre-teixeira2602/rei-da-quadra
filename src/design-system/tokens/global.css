@@ -1,0 +1,129 @@
+/* Global app styles powered by DS tokens */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--rq-bg);
+  color: var(--rq-text);
+  font-family: var(--rq-font);
+  font-size: var(--rq-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  isolation: isolate;
+}
+
+#root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 420px at 50% -10%, rgba(247, 248, 255, 0.22), transparent 68%),
+    radial-gradient(900px 420px at 15% 0%, rgba(247, 248, 255, 0.12), transparent 70%),
+    radial-gradient(900px 420px at 85% 0%, rgba(247, 248, 255, 0.10), transparent 72%),
+    radial-gradient(1400px 900px at 50% 0%, rgba(10, 18, 42, 0.55), transparent 70%),
+    radial-gradient(900px 700px at 50% 100%, rgba(14, 27, 61, 0.55), transparent 65%);
+  filter: saturate(1.08) contrast(1.04);
+}
+
+/* “Arena / quadra” (linhas em perspectiva + brilho). */
+#root::after {
+  content: '';
+  position: fixed;
+  inset: -35% -25%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.66;
+  transform-origin: top center;
+  transform: perspective(900px) rotateX(62deg) translateY(28vh);
+  background:
+    radial-gradient(520px 220px at 50% 20%, rgba(199, 255, 61, 0.16), transparent 70%),
+    /* linha central */
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 1px),
+      rgba(247, 248, 255, 0.10) calc(50% - 1px),
+      rgba(247, 248, 255, 0.10) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ),
+    /* linhas laterais */
+    linear-gradient(
+      90deg,
+      transparent calc(18% - 1px),
+      rgba(247, 248, 255, 0.09) calc(18% - 1px),
+      rgba(247, 248, 255, 0.09) calc(18% + 1px),
+      transparent calc(18% + 1px),
+      transparent calc(82% - 1px),
+      rgba(247, 248, 255, 0.09) calc(82% - 1px),
+      rgba(247, 248, 255, 0.09) calc(82% + 1px),
+      transparent calc(82% + 1px)
+    ),
+    /* linhas horizontais (baseline + serviço) */
+    linear-gradient(
+      180deg,
+      transparent 14%,
+      rgba(247, 248, 255, 0.10) 14%,
+      rgba(247, 248, 255, 0.10) 14.5%,
+      transparent 14.5%,
+      transparent 50%,
+      rgba(247, 248, 255, 0.08) 50%,
+      rgba(247, 248, 255, 0.08) 50.5%,
+      transparent 50.5%,
+      transparent 86%,
+      rgba(247, 248, 255, 0.10) 86%,
+      rgba(247, 248, 255, 0.10) 86.5%,
+      transparent 86.5%
+    );
+  filter: blur(0.15px);
+}
+
+a {
+  color: inherit;
+}
+
+a:hover {
+  color: color-mix(in srgb, var(--rq-text), var(--rq-neon) 18%);
+}
+
+::selection {
+  background: rgba(199, 255, 61, 0.22);
+}
+
+.rq-muted {
+  color: var(--rq-text-muted);
+}
+
+.rq-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--rq-s-2);
+}
+
+@media (min-width: 1024px) {
+  .rq-container {
+    padding: var(--rq-s-3);
+  }
+}
+
+.rq-grid-gap {
+  display: grid;
+  gap: var(--rq-s-2);
+}
+

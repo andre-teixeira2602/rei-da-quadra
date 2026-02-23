@@ -1,0 +1,39 @@
+.rqBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--rq-caption);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 15%);
+  background: rgba(10, 18, 42, 0.55);
+  color: var(--rq-text);
+}
+
+.rqBadge-INICIANTE {
+  opacity: 0.9;
+}
+
+.rqBadge-DESAFIANTE {
+  border-color: color-mix(in srgb, var(--rq-clay), transparent 55%);
+  background: rgba(227, 106, 46, 0.10);
+}
+
+.rqBadge-COMPETIDOR {
+  border-color: rgba(46, 224, 123, 0.35);
+  background: rgba(46, 224, 123, 0.12);
+}
+
+.rqBadge-ELITE {
+  border-color: rgba(199, 255, 61, 0.28);
+  background: rgba(199, 255, 61, 0.08);
+}
+
+.rqBadge-REI {
+  border-color: rgba(199, 255, 61, 0.35);
+  background: rgba(199, 255, 61, 0.10);
+  box-shadow: 0 0 0 1px rgba(199, 255, 61, 0.25), 0 0 18px rgba(199, 255, 61, 0.12);
+}
+

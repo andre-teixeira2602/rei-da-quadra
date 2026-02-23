@@ -1,0 +1,37 @@
+.rqCard {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--rq-surface-2), transparent 8%), color-mix(in srgb, var(--rq-surface-1), transparent 6%));
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 12%);
+  border-radius: var(--rq-r-lg);
+  box-shadow: 0 10px 30px var(--rq-shadow);
+  padding: var(--rq-s-2);
+}
+
+.rqCardElevated {
+  background: linear-gradient(180deg, var(--rq-surface-2), var(--rq-surface-1));
+}
+
+.rqCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rq-s-2);
+  margin-bottom: var(--rq-s-2);
+}
+
+.rqCardTitle {
+  margin: 0;
+  font-size: var(--rq-h2);
+  letter-spacing: 0.2px;
+}
+
+.rqCardRight {
+  display: flex;
+  align-items: center;
+  gap: var(--rq-s-1);
+}
+
+.rqCardBody {
+  display: grid;
+  gap: var(--rq-s-1);
+}
+

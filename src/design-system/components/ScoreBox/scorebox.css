@@ -1,0 +1,26 @@
+.rqScoreBox {
+  width: 56px;
+  height: 52px;
+  border-radius: var(--rq-r-md);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 10%);
+  background: color-mix(in srgb, var(--rq-surface-2), white 10%);
+  color: #0a122a;
+  display: grid;
+  place-items: center;
+  font-weight: var(--rq-score);
+  font-variant-numeric: tabular-nums;
+}
+
+.rqScoreBox:focus-visible {
+  outline: 2px solid var(--rq-focus);
+  outline-offset: 2px;
+}
+
+.rqScoreBox-win {
+  box-shadow: 0 0 0 2px rgba(46, 224, 123, 0.28);
+}
+
+.rqScoreBox-loss {
+  box-shadow: 0 0 0 2px rgba(255, 77, 90, 0.26);
+}
+

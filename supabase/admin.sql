@@ -1,0 +1,105 @@
+-- Rei da Quadra — Admin flow (fora do cliente)
+-- Execute no Supabase Dashboard → SQL Editor (supabase/admin.sql).
+-- Objetivo: gerenciar category_members (posições/ativação) com consistência e sem expor nada no frontend.
+
+-- =============================================================================
+-- 1) Ver categorias
+-- =============================================================================
+-- select * from public.categories order by name;
+
+-- =============================================================================
+-- 2) Inserir membro (posiciona no fim por padrão)
+-- =============================================================================
+-- Troque <CATEGORY_ID> e <USER_UUID>.
+-- Observação: o profile é criado automaticamente ao criar o usuário em auth.users.
+--
+-- insert into public.category_members (category_id, user_id, rank_position, status)
+-- values (
+--   '<CATEGORY_ID>'::uuid,
+--   '<USER_UUID>'::uuid,
+--   (select coalesce(max(rank_position), 0) + 1 from public.category_members where category_id = '<CATEGORY_ID>'::uuid),
+--   'active'
+-- );
+
+-- =============================================================================
+-- 3) Ativar/Inativar membro
+-- =============================================================================
+-- update public.category_members
+-- set status = 'inactive'
+-- where category_id = '<CATEGORY_ID>'::uuid and user_id = '<USER_UUID>'::uuid;
+--
+-- update public.category_members
+-- set status = 'active'
+-- where category_id = '<CATEGORY_ID>'::uuid and user_id = '<USER_UUID>'::uuid;
+
+-- =============================================================================
+-- 4) Trocar posições entre dois membros (swap transacional)
+-- =============================================================================
+-- Use quando precisar trocar 2 usuários sem quebrar unique(category_id, rank_position).
+--
+-- begin;
+-- do $$
+-- declare
+--   v_cat uuid := '<CATEGORY_ID>'::uuid;
+--   v_a uuid := '<USER_A_UUID>'::uuid;
+--   v_b uuid := '<USER_B_UUID>'::uuid;
+--   pos_a int;
+--   pos_b int;
+--   tmp int;
+-- begin
+--   select rank_position into pos_a from public.category_members where category_id = v_cat and user_id = v_a for update;
+--   select rank_position into pos_b from public.category_members where category_id = v_cat and user_id = v_b for update;
+--   if pos_a is null or pos_b is null then
+--     raise exception 'member_not_found';
+--   end if;
+--   tmp := (select coalesce(max(rank_position), 0) + 1000000 from public.category_members where category_id = v_cat);
+--   update public.category_members set rank_position = tmp where category_id = v_cat and user_id = v_a;
+--   update public.category_members set rank_position = pos_a where category_id = v_cat and user_id = v_b;
+--   update public.category_members set rank_position = pos_b where category_id = v_cat and user_id = v_a;
+-- end $$;
+-- commit;
+
+-- =============================================================================
+-- 5) Resequenciar posições (1..n) preservando a ordem atual
+-- =============================================================================
+-- Útil depois de inativar membros ou corrigir gaps.
+--
+-- begin;
+-- do $$
+-- declare
+--   v_cat uuid := '<CATEGORY_ID>'::uuid;
+-- begin
+--   -- Step 1: desloca todas as posições para um range alto (mantém unicidade e passa check rank_position > 0).
+--   update public.category_members
+--   set rank_position = rank_position + 1000000
+--   where category_id = v_cat;
+--
+--   -- Step 2: reatribui 1..n pela ordem atual
+--   with ordered as (
+--     select user_id, row_number() over (order by rank_position asc) as rn
+--     from public.category_members
+--     where category_id = v_cat
+--   )
+--   update public.category_members cm
+--   set rank_position = ordered.rn
+--   from ordered
+--   where cm.category_id = v_cat and cm.user_id = ordered.user_id;
+-- end $$;
+-- commit;
+
+-- =============================================================================
+-- 6) Criar categorias adicionais (C/D/Iniciantes)
+-- =============================================================================
+-- insert into public.categories (name, challenge_range) values ('Categoria C', 3) on conflict (name) do nothing;
+-- insert into public.categories (name, challenge_range) values ('Categoria D', 3) on conflict (name) do nothing;
+-- insert into public.categories (name, challenge_range) values ('Iniciantes', 2) on conflict (name) do nothing;
+
+-- =============================================================================
+-- 7) Cadastrar quadras (courts)
+-- =============================================================================
+-- insert into public.courts (name, city, address, is_active)
+-- values
+--   ('Quadra Principal', 'São Paulo', null, true),
+--   ('Arena Central', 'São Paulo', null, true)
+-- on conflict (name) do nothing;
+

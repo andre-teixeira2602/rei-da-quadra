@@ -1,0 +1,57 @@
+/* BottomNav visual refinement (tokens) */
+
+.bottomNav {
+  border-top: 1px solid color-mix(in srgb, var(--rq-border), transparent 20%);
+  background: color-mix(in srgb, var(--rq-bg), transparent 10%);
+  backdrop-filter: blur(12px);
+}
+
+.bottomNavLink {
+  opacity: 0.78;
+}
+
+.bottomNavLinkActive {
+  border-color: color-mix(in srgb, var(--rq-clay), transparent 60%);
+  opacity: 1;
+}
+
+.bottomNavIconWrap {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: color-mix(in srgb, var(--rq-text-muted), var(--rq-text) 10%);
+}
+
+.bottomNavIcon {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.bottomNavLabel {
+  color: var(--rq-text-muted);
+}
+
+.bottomNavLinkActive .bottomNavIconWrap {
+  color: color-mix(in srgb, var(--rq-text), var(--rq-clay) 22%);
+  filter:
+    drop-shadow(0 10px 22px rgba(0, 0, 0, 0.40))
+    drop-shadow(0 0 18px rgba(227, 106, 46, 0.14));
+}
+
+.bottomNavLinkActive .bottomNavLabel {
+  color: var(--rq-text);
+}
+
+.navDot {
+  background: var(--rq-neon);
+  box-shadow:
+    0 0 16px rgba(199, 255, 61, 0.18),
+    0 0 26px rgba(199, 255, 61, 0.12);
+  position: absolute;
+  right: 2px;
+  top: 2px;
+}
+

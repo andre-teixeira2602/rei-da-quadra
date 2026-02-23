@@ -1,0 +1,50 @@
+.rqMatches {
+  display: grid;
+  gap: var(--rq-s-3);
+}
+
+.rqMatchesHeader {
+  display: grid;
+  gap: 6px;
+}
+
+.rqMatchesTitle {
+  margin: 0;
+  font-size: var(--rq-h1);
+  letter-spacing: 0.2px;
+  font-weight: 920;
+}
+
+.rqMatchesToolbar {
+  display: flex;
+  gap: var(--rq-s-1);
+  flex-wrap: wrap;
+}
+
+.rqMatchesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.rqMatchRowPremium {
+  padding: 12px;
+  border-radius: var(--rq-r-lg);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 20%);
+  background: rgba(10, 18, 42, 0.35);
+  display: grid;
+  gap: 6px;
+}
+
+.rqEmpty {
+  color: var(--rq-text-muted);
+  font-size: var(--rq-body);
+  line-height: 1.4;
+  padding: 12px;
+  border-radius: var(--rq-r-lg);
+  border: 1px dashed color-mix(in srgb, var(--rq-border), transparent 25%);
+  background: rgba(10, 18, 42, 0.28);
+}
+

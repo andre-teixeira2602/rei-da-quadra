@@ -1,0 +1,55 @@
+.rqInputField {
+  display: grid;
+  gap: 6px;
+}
+
+.rqInputLabel {
+  font-size: 13px;
+  color: var(--rq-text-muted);
+}
+
+.rqInput {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--rq-r-md);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 12%);
+  background: rgba(10, 18, 42, 0.65);
+  color: var(--rq-text);
+  font-family: var(--rq-font);
+  font-size: var(--rq-body);
+  transition:
+    border-color var(--rq-dur-1) var(--rq-ease),
+    box-shadow var(--rq-dur-1) var(--rq-ease);
+}
+
+.rqInput::placeholder {
+  color: color-mix(in srgb, var(--rq-text-muted), transparent 10%);
+}
+
+.rqInput:focus-visible {
+  outline: 2px solid var(--rq-focus);
+  outline-offset: 2px;
+}
+
+.rqInput:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rqInput--error {
+  border-color: rgba(255, 77, 90, 0.55);
+  box-shadow: 0 0 0 2px rgba(255, 77, 90, 0.10);
+}
+
+.rqInputHelper {
+  font-size: var(--rq-caption);
+  color: var(--rq-text-muted);
+  line-height: 1.35;
+}
+
+.rqInputError {
+  font-size: var(--rq-caption);
+  color: color-mix(in srgb, var(--rq-danger), white 6%);
+  line-height: 1.35;
+}
+

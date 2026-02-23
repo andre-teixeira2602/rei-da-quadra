@@ -1,0 +1,51 @@
+.rqProgressTrack {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(247, 248, 255, 0.08);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 12%);
+  overflow: hidden;
+}
+
+.rqProgressFill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  /* neon fraco à esquerda → mais forte na ponta (direita) */
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--rq-neon), transparent 78%) 0%,
+      color-mix(in srgb, var(--rq-neon), transparent 58%) 35%,
+      color-mix(in srgb, var(--rq-neon), transparent 30%) 70%,
+      color-mix(in srgb, var(--rq-neon), transparent 0%) 100%
+    );
+  transition: width var(--rq-dur-2) var(--rq-ease);
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(199, 255, 61, 0.28) inset,
+    0 12px 34px rgba(199, 255, 61, 0.22),
+    0 0 34px rgba(199, 255, 61, 0.20),
+    0 0 54px rgba(199, 255, 61, 0.10);
+}
+
+.rqProgressFill::after {
+  content: '';
+  position: absolute;
+  right: -18px;
+  top: -10px;
+  width: 26px;
+  height: 30px;
+  background:
+    radial-gradient(circle at 40% 50%, rgba(199, 255, 61, 0.85), transparent 62%),
+    radial-gradient(circle at 40% 50%, rgba(199, 255, 61, 0.40), transparent 72%);
+  opacity: 1;
+  filter: blur(0.1px);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rqProgressFill {
+    transition: none;
+  }
+}
+
