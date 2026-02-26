@@ -580,6 +580,94 @@ begin
 end;
 $$;
 
+-- 5) get_challenge_by_id: busca um desafio específico (somente se o usuário for parte)
+drop function if exists public.get_challenge_by_id(uuid);
+create function public.get_challenge_by_id(p_challenge_id uuid)
+returns table (
+  id uuid,
+  category_id uuid,
+  challenger_id uuid,
+  defender_id uuid,
+  status text,
+  created_at timestamptz,
+  expires_at timestamptz,
+  responded_at timestamptz,
+  completed_at timestamptz
+)
+language plpgsql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'not_authenticated';
+  end if;
+
+  return query
+  select
+    c.id,
+    c.category_id,
+    c.challenger_id,
+    c.defender_id,
+    c.status,
+    c.created_at,
+    c.expires_at,
+    c.responded_at,
+    c.completed_at
+  from public.challenges c
+  where c.id = p_challenge_id
+    and (c.challenger_id = auth.uid() or c.defender_id = auth.uid());
+end;
+$$;
+
+-- 6) list_my_challenges: lista desafios do usuário autenticado numa categoria
+-- Usa SECURITY DEFINER para bypass de RLS e lógica explícita de autorização.
+drop function if exists public.list_my_challenges(uuid);
+create function public.list_my_challenges(p_category_id uuid)
+returns table (
+  id uuid,
+  category_id uuid,
+  challenger_id uuid,
+  defender_id uuid,
+  status text,
+  created_at timestamptz,
+  expires_at timestamptz,
+  responded_at timestamptz,
+  completed_at timestamptz
+)
+language plpgsql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'not_authenticated';
+  end if;
+
+  if not public.is_category_member(p_category_id) then
+    raise exception 'not_authorized';
+  end if;
+
+  return query
+  select
+    c.id,
+    c.category_id,
+    c.challenger_id,
+    c.defender_id,
+    c.status,
+    c.created_at,
+    c.expires_at,
+    c.responded_at,
+    c.completed_at
+  from public.challenges c
+  where c.category_id = p_category_id
+    and (c.challenger_id = auth.uid() or c.defender_id = auth.uid())
+  order by c.created_at desc;
+end;
+$$;
+
 -- =============================================================================
 -- RLS (Row Level Security)
 -- =============================================================================
@@ -677,11 +765,15 @@ revoke all on function public.create_challenge(uuid, uuid) from public;
 revoke all on function public.respond_challenge(uuid, text) from public;
 revoke all on function public.report_match(uuid, uuid, text, timestamptz) from public;
 revoke all on function public.report_match(uuid, uuid, timestamptz, text, uuid) from public;
+revoke all on function public.list_my_challenges(uuid) from public;
+revoke all on function public.get_challenge_by_id(uuid) from public;
 
 grant execute on function public.get_ranking(uuid) to authenticated;
 grant execute on function public.get_king(uuid) to authenticated;
 grant execute on function public.create_challenge(uuid, uuid) to authenticated;
 grant execute on function public.respond_challenge(uuid, text) to authenticated;
+grant execute on function public.list_my_challenges(uuid) to authenticated;
+grant execute on function public.get_challenge_by_id(uuid) to authenticated;
 grant execute on function public.report_match(uuid, uuid, text, timestamptz) to authenticated;
 grant execute on function public.report_match(uuid, uuid, timestamptz, text, uuid) to authenticated;
 

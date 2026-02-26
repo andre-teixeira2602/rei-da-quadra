@@ -149,7 +149,7 @@ export default function DashboardPage() {
         const [cat, rank, ch, matches] = await Promise.all([
           getCategoryById(categoryId),
           getRanking(categoryId),
-          listMyChallenges({ categoryId, userId: auth.userId }),
+          listMyChallenges({ categoryId }),
           listMatchesByCategory({ categoryId, limit: 3 }),
         ])
         if (!alive) return

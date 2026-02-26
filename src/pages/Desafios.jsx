@@ -48,7 +48,7 @@ export default function Desafios() {
     setLoading(true)
     setError('')
     try {
-      const rows = await listMyChallenges({ categoryId, userId })
+      const rows = await listMyChallenges({ categoryId })
       setChallenges(rows)
 
       const ids = []
