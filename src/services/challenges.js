@@ -1,7 +1,22 @@
 import { rpc } from './supabaseFetch.js'
 
 export async function listMyChallenges({ categoryId }) {
-  return await rpc('list_my_challenges', { p_category_id: categoryId })
+  // #region agent log
+  console.warn('[listMyChallenges] called with categoryId:', categoryId, 'type:', typeof categoryId)
+  // #endregion
+  let data
+  try {
+    data = await rpc('list_my_challenges', { p_category_id: categoryId })
+  } catch (err) {
+    // #region agent log
+    console.warn('[listMyChallenges] RPC threw error:', err)
+    // #endregion
+    throw err
+  }
+  // #region agent log
+  console.warn('[listMyChallenges] raw response type:', typeof data, 'isArray:', Array.isArray(data), 'length:', data?.length, 'data:', JSON.stringify(data))
+  // #endregion
+  return Array.isArray(data) ? data : []
 }
 
 export async function getChallengeById(challengeId) {

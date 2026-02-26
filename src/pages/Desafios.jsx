@@ -41,14 +41,63 @@ export default function Desafios() {
   const userId = auth?.userId ?? null
   const categoryId = selectedCategoryId
 
+  // #region agent log — debug state
+  const [debugInfo, setDebugInfo] = useState(null)
+  // #endregion
+
   async function refresh() {
-    if (!userId) return
-    if (!categoryId) return
+    // #region agent log
+    console.warn('[Desafios.refresh] userId:', userId, 'type:', typeof userId)
+    console.warn('[Desafios.refresh] categoryId:', categoryId, 'type:', typeof categoryId)
+    console.warn('[Desafios.refresh] auth object:', JSON.stringify(auth))
+    // #endregion
+
+    if (!userId) {
+      // #region agent log
+      console.warn('[Desafios.refresh] EARLY RETURN — userId is falsy')
+      setDebugInfo((prev) => ({ ...prev, earlyReturn: 'userId falsy', userId, categoryId, auth: JSON.parse(JSON.stringify(auth)) }))
+      // #endregion
+      return
+    }
+    if (!categoryId) {
+      // #region agent log
+      console.warn('[Desafios.refresh] EARLY RETURN — categoryId is falsy')
+      setDebugInfo((prev) => ({ ...prev, earlyReturn: 'categoryId falsy', userId, categoryId }))
+      // #endregion
+      return
+    }
 
     setLoading(true)
     setError('')
     try {
       const rows = await listMyChallenges({ categoryId })
+
+      // #region agent log
+      console.warn('[Desafios.refresh] rows count:', rows?.length)
+      console.warn('[Desafios.refresh] rows:', JSON.stringify(rows))
+      if (rows && rows.length > 0) {
+        rows.forEach((c, i) => {
+          console.warn(`[Desafios.refresh] row[${i}] challenger_id:`, c.challenger_id, 'defender_id:', c.defender_id, 'status:', c.status, 'category_id:', c.category_id)
+          console.warn(`[Desafios.refresh] row[${i}] defender_id === userId ?`, c.defender_id === userId, '(defender_id type:', typeof c.defender_id, ', userId type:', typeof userId, ')')
+        })
+      }
+      setDebugInfo({
+        userId,
+        categoryId,
+        auth: JSON.parse(JSON.stringify(auth)),
+        rowCount: rows?.length ?? 0,
+        rows: rows?.map((c) => ({
+          id: c.id,
+          challenger_id: c.challenger_id,
+          defender_id: c.defender_id,
+          status: c.status,
+          category_id: c.category_id,
+          defenderMatch: c.defender_id === userId,
+          challengerMatch: c.challenger_id === userId,
+        })) ?? [],
+      })
+      // #endregion
+
       setChallenges(rows)
 
       const ids = []
@@ -57,6 +106,10 @@ export default function Desafios() {
       }
       setProfilesById(await getProfilesByIds(ids))
     } catch (e) {
+      // #region agent log
+      console.warn('[Desafios.refresh] ERROR caught:', e)
+      setDebugInfo((prev) => ({ ...prev, error: String(e?.message ?? e) }))
+      // #endregion
       const msg = getErrorMessage(e, 'Não foi possível carregar os desafios.')
       setError(msg.includes('not_authorized') ? t('category.notMember') : msg)
     } finally {
@@ -298,6 +351,32 @@ export default function Desafios() {
           )}
         </section>
       </Card>
+
+      {/* #region agent log — Debug diagnostic panel (dev only) */}
+      {import.meta.env.DEV && debugInfo ? (
+        <Card title="🔍 Debug: Desafios Diagnostics">
+          <div style={{ fontSize: '0.75rem', fontFamily: 'monospace', whiteSpace: 'pre-wrap', wordBreak: 'break-all', background: '#1a1a2e', color: '#0f0', padding: '0.75rem', borderRadius: '6px', maxHeight: '400px', overflow: 'auto' }}>
+            <div><strong>auth.userId:</strong> {String(debugInfo.userId)} (type: {typeof debugInfo.userId})</div>
+            <div><strong>selectedCategoryId:</strong> {String(debugInfo.categoryId)} (type: {typeof debugInfo.categoryId})</div>
+            <div><strong>auth object:</strong> {JSON.stringify(debugInfo.auth, null, 2)}</div>
+            {debugInfo.earlyReturn ? <div style={{ color: '#f00' }}><strong>⚠ EARLY RETURN:</strong> {debugInfo.earlyReturn}</div> : null}
+            {debugInfo.error ? <div style={{ color: '#f00' }}><strong>⚠ ERROR:</strong> {debugInfo.error}</div> : null}
+            <div><strong>RPC row count:</strong> {debugInfo.rowCount}</div>
+            <div><strong>againstMe count:</strong> {againstMe.length}</div>
+            <div><strong>byMe count:</strong> {byMe.length}</div>
+            <hr style={{ borderColor: '#333' }} />
+            <div><strong>Rows from RPC:</strong></div>
+            {debugInfo.rows?.map((r, i) => (
+              <div key={i} style={{ marginLeft: '1rem', marginBottom: '0.25rem' }}>
+                [{i}] id: {r.id?.slice(0, 8)}… | challenger: {r.challenger_id?.slice(0, 8)}… | defender: {r.defender_id?.slice(0, 8)}… | status: {r.status} | cat: {r.category_id?.slice(0, 8) ?? 'N/A'}
+                <br />
+                &nbsp;&nbsp;defender===userId? <strong style={{ color: r.defenderMatch ? '#0f0' : '#f00' }}>{String(r.defenderMatch)}</strong> | challenger===userId? <strong style={{ color: r.challengerMatch ? '#0f0' : '#f00' }}>{String(r.challengerMatch)}</strong>
+              </div>
+            ))}
+          </div>
+        </Card>
+      ) : null}
+      {/* #endregion */}
     </div>
   )
 }
