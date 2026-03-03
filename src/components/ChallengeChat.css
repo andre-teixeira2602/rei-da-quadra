@@ -1,0 +1,134 @@
+.rqChatOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 11, 24, 0.82);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+}
+
+.rqChatModal {
+  width: min(480px, 100%);
+  max-height: 85vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: var(--rq-card);
+  border: 1px solid var(--rq-border);
+  border-radius: var(--rq-r-lg);
+  overflow: hidden;
+}
+
+.rqChatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--rq-border), transparent 30%);
+}
+
+.rqChatTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.rqChatClose {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--rq-text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.rqChatClose:hover {
+  background: color-mix(in srgb, var(--rq-border), transparent 70%);
+}
+
+.rqChatError {
+  padding: 8px 14px;
+  font-size: var(--rq-caption);
+  color: var(--rq-danger, #f55);
+  background: rgba(255, 77, 90, 0.08);
+}
+
+.rqChatMessages {
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 200px;
+}
+
+.rqChatEmpty {
+  color: var(--rq-text-muted);
+  font-size: var(--rq-body);
+  margin: auto;
+  padding: 12px;
+}
+
+.rqChatBubble {
+  max-width: 85%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  display: grid;
+  gap: 2px;
+}
+
+.rqChatBubbleMe {
+  align-self: flex-end;
+  background: color-mix(in srgb, var(--rq-primary), transparent 75%);
+  border: 1px solid color-mix(in srgb, var(--rq-primary), transparent 50%);
+}
+
+.rqChatBubbleOther {
+  align-self: flex-start;
+  background: rgba(10, 18, 42, 0.5);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 20%);
+}
+
+.rqChatBubbleSender {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--rq-text-muted);
+}
+
+.rqChatBubbleText {
+  font-size: var(--rq-body);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.rqChatBubbleTime {
+  font-size: 0.7rem;
+  color: var(--rq-text-muted);
+  margin-top: 2px;
+}
+
+.rqChatForm {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--rq-border), transparent 30%);
+}
+
+.rqChatInput {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: var(--rq-r-lg);
+  border: 1px solid var(--rq-border);
+  background: rgba(10, 18, 42, 0.5);
+  color: var(--rq-text);
+  font-size: var(--rq-body);
+}
+
+.rqChatInput::placeholder {
+  color: var(--rq-text-muted);
+}

@@ -10,9 +10,10 @@ import { useIsMobile } from '../../../layout/useIsMobile.js'
 import { ClayButton } from '../../../design-system/components/Button/Button.jsx'
 import { getChallengeById } from '../../../services/challenges.js'
 import { listActiveCourts } from '../../../services/courts.js'
-import { reportMatch } from '../../../services/matches.js'
+import { reportMatch, reportMatchAntiFraud } from '../../../services/matches.js'
 import { formatProfileLabel, getProfilesByIds } from '../../../services/profiles.js'
 import { getErrorMessage } from '../../../services/supabaseFetch.js'
+import { ANTI_FRAUD_V1_ENABLED } from '../../../config/flags.js'
 
 function toLocalDateTimeInputValue(d) {
   const pad = (n) => String(n).padStart(2, '0')
@@ -195,14 +196,29 @@ export default function RecordMatchPage() {
 
     try {
       setLoading(true)
-      await reportMatch({
-        challengeId: challenge.id,
-        winnerId,
-        score: outcome.score,
-        playedAt: playedAt.toISOString(),
-        courtId: courtId || null,
-      })
-      navigate('/partidas', { replace: true, state: { postMatch: { kind: 'reported' } } })
+
+      if (ANTI_FRAUD_V1_ENABLED) {
+        await reportMatchAntiFraud({
+          challengeId: challenge.id,
+          winnerId,
+          score: outcome.score,
+          playedAt: playedAt.toISOString(),
+          courtId: courtId || null,
+        })
+        navigate('/partidas', {
+          replace: true,
+          state: { postMatch: { kind: 'reported_pending' } },
+        })
+      } else {
+        await reportMatch({
+          challengeId: challenge.id,
+          winnerId,
+          score: outcome.score,
+          playedAt: playedAt.toISOString(),
+          courtId: courtId || null,
+        })
+        navigate('/partidas', { replace: true, state: { postMatch: { kind: 'reported' } } })
+      }
     } catch (e) {
       setToast({ message: getErrorMessage(e, t('matches.reportError')) })
     } finally {

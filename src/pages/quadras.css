@@ -1,0 +1,140 @@
+.rqQuadras {
+  display: grid;
+  gap: var(--rq-s-3);
+}
+
+.rqQuadrasHeader {
+  display: grid;
+  gap: 6px;
+  padding: 12px 0;
+}
+
+.rqQuadrasTitle {
+  margin: 0;
+  font-size: var(--rq-h1);
+  letter-spacing: 0.2px;
+  font-weight: 920;
+}
+
+.rqQuadrasSubtitle {
+  font-size: var(--rq-body);
+  opacity: 0.9;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.rqQuadrasToolbar {
+  display: flex;
+  gap: var(--rq-s-1);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.rqQuadrasSearch {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px 14px;
+  border-radius: var(--rq-r-lg);
+  border: 1px solid var(--rq-border);
+  background: rgba(10, 18, 42, 0.5);
+  color: var(--rq-text);
+  font-size: var(--rq-body);
+}
+
+.rqQuadrasSearch::placeholder {
+  color: var(--rq-text-muted);
+}
+
+.rqCourtList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.rqCourtRow {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--rq-r-lg);
+  border: 1px solid color-mix(in srgb, var(--rq-border), transparent 20%);
+  background: rgba(10, 18, 42, 0.35);
+}
+
+.rqCourtMain {
+  display: grid;
+  gap: 4px;
+}
+
+.rqCourtName {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.rqCourtCity,
+.rqCourtAddress,
+.rqCourtContact {
+  font-size: var(--rq-caption);
+  color: var(--rq-text-muted);
+}
+
+.rqCourtMeta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rqQuadrasEmpty {
+  color: var(--rq-text-muted);
+  font-size: var(--rq-body);
+  line-height: 1.4;
+  padding: 12px;
+  margin: 0;
+}
+
+/* Form Nova Quadra */
+.rqCourtForm {
+  display: grid;
+  gap: 14px;
+}
+
+.rqCourtFormField {
+  display: grid;
+  gap: 6px;
+}
+
+.rqCourtFormFieldRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rqCourtFormLabel {
+  font-size: var(--rq-caption);
+  font-weight: 600;
+  color: var(--rq-text);
+}
+
+.rqCourtFormInput {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--rq-r-lg);
+  border: 1px solid var(--rq-border);
+  background: rgba(10, 18, 42, 0.5);
+  color: var(--rq-text);
+  font-size: var(--rq-body);
+}
+
+.rqCourtFormCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--rq-primary);
+}
+
+.rqCourtFormActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}

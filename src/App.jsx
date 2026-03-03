@@ -13,6 +13,8 @@ import Rei from './pages/Rei'
 import Partidas from './pages/Partidas'
 import Login from './pages/Login'
 import Perfil from './pages/Perfil'
+import Quadras from './pages/Quadras'
+import QuadrasNova from './pages/QuadrasNova'
 import RecordMatchPage from './features/matches/pages/RecordMatchPage'
 
 import { useAppActions, useAppState } from './state/AppState'
@@ -138,6 +140,23 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Partidas />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/quadras"
+            element={
+              <ProtectedRoute>
+                <Quadras />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quadras/nova"
+            element={
+              <ProtectedRoute>
+                <QuadrasNova />
               </ProtectedRoute>
             }
           />

@@ -10,6 +10,7 @@ import { getErrorMessage } from '../services/supabaseFetch.js'
 
 import Card from '../design-system/components/Card/Card.jsx'
 import { ClayButton, SecondaryButton } from '../design-system/components/Button/Button.jsx'
+import ChallengeChat from '../components/ChallengeChat.jsx'
 
 import './desafios.css'
 
@@ -37,6 +38,7 @@ export default function Desafios() {
   const [error, setError] = useState('')
   const [challenges, setChallenges] = useState([])
   const [profilesById, setProfilesById] = useState(new Map())
+  const [chatChallenge, setChatChallenge] = useState(null)
 
   const userId = auth?.userId ?? null
   const categoryId = selectedCategoryId
@@ -192,12 +194,20 @@ export default function Desafios() {
                       ) : null}
 
                       {c.status === 'accepted' ? (
-                        <ClayButton
-                          type="button"
-                          onClick={() => navigate(`/partidas?challenge=${encodeURIComponent(c.id)}`)}
-                        >
-                          {t('challenges.reportMatch')}
-                        </ClayButton>
+                        <>
+                          <SecondaryButton
+                            type="button"
+                            onClick={() => setChatChallenge({ id: c.id, challenger_id: c.challenger_id, defender_id: c.defender_id })}
+                          >
+                            {t('challenges.openChat')}
+                          </SecondaryButton>
+                          <ClayButton
+                            type="button"
+                            onClick={() => navigate(`/partidas?challenge=${encodeURIComponent(c.id)}`)}
+                          >
+                            {t('challenges.reportMatch')}
+                          </ClayButton>
+                        </>
                       ) : null}
                     </div>
                   </li>
@@ -244,12 +254,20 @@ export default function Desafios() {
 
                     <div className="rqChallengeActions">
                       {c.status === 'accepted' ? (
-                        <ClayButton
-                          type="button"
-                          onClick={() => navigate(`/partidas?challenge=${encodeURIComponent(c.id)}`)}
-                        >
-                          {t('challenges.reportMatch')}
-                        </ClayButton>
+                        <>
+                          <SecondaryButton
+                            type="button"
+                            onClick={() => setChatChallenge({ id: c.id, challenger_id: c.challenger_id, defender_id: c.defender_id })}
+                          >
+                            {t('challenges.openChat')}
+                          </SecondaryButton>
+                          <ClayButton
+                            type="button"
+                            onClick={() => navigate(`/partidas?challenge=${encodeURIComponent(c.id)}`)}
+                          >
+                            {t('challenges.reportMatch')}
+                          </ClayButton>
+                        </>
                       ) : null}
                     </div>
                   </li>
@@ -298,7 +316,15 @@ export default function Desafios() {
           )}
         </section>
       </Card>
+
+      {chatChallenge ? (
+        <ChallengeChat
+          challengeId={chatChallenge.id}
+          challengerId={chatChallenge.challenger_id}
+          defenderId={chatChallenge.defender_id}
+          onClose={() => setChatChallenge(null)}
+        />
+      ) : null}
     </div>
   )
 }
-

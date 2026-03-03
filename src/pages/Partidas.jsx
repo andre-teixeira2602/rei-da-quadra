@@ -5,10 +5,11 @@ import { useI18n } from '../i18n/useI18n.js'
 import { useAppState } from '../state/AppState.jsx'
 import { formatDate } from '../state/utils.js'
 import { getChallengeById } from '../services/challenges.js'
-import { listMatchesByCategory, reportMatch } from '../services/matches.js'
+import { confirmMatchResult, disputeMatchResult, listMatchesByCategory, reportMatch, reportMatchAntiFraud } from '../services/matches.js'
 import { listActiveCourts } from '../services/courts.js'
 import { formatProfileLabel, getProfilesByIds } from '../services/profiles.js'
 import { getErrorMessage } from '../services/supabaseFetch.js'
+import { ANTI_FRAUD_V1_ENABLED } from '../config/flags.js'
 
 import Card from '../design-system/components/Card/Card.jsx'
 import { SecondaryButton } from '../design-system/components/Button/Button.jsx'
@@ -190,6 +191,17 @@ export default function Partidas() {
     return [...matches].sort((a, b) => new Date(b.played_at) - new Date(a.played_at))
   }, [matches])
 
+  const pendingForMe = useMemo(() => {
+    const userId = auth?.userId
+    if (!userId) return []
+    return matches.filter((m) => {
+      if (!m || m.status !== 'pending_confirm') return false
+      const involved = m.winner_id === userId || m.loser_id === userId
+      const isReporter = m.reported_by === userId
+      return involved && !isReporter
+    })
+  }, [matches, auth?.userId])
+
   async function refreshMatches() {
     if (!auth?.isAuthenticated) return
     if (!effectiveCategoryId) return
@@ -297,8 +309,20 @@ export default function Partidas() {
 
       {postMatch ? (
         <div className="arenaCard arenaSuccessGlow">
-          <div className="arenaSectionKicker">{t('postMatch.title')}</div>
-          <div style={{ marginTop: 8, fontWeight: 850, letterSpacing: 0.2 }}>{t('postMatch.body')}</div>
+          <div className="arenaSectionKicker">
+            {postMatch.kind === 'reported_pending'
+              ? t('postMatch.pendingTitle')
+              : postMatch.kind === 'reported_and_confirmed'
+              ? t('postMatch.confirmedTitle')
+              : t('postMatch.title')}
+          </div>
+          <div style={{ marginTop: 8, fontWeight: 850, letterSpacing: 0.2 }}>
+            {postMatch.kind === 'reported_pending'
+              ? t('postMatch.pendingBody')
+              : postMatch.kind === 'reported_and_confirmed'
+              ? t('postMatch.confirmedBody')
+              : t('postMatch.body')}
+          </div>
           <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button type="button" className="arenaButton arenaButtonPrimary" onClick={() => navigate('/ranking')}>
               {t('postMatch.ctaRanking')}
@@ -308,6 +332,80 @@ export default function Partidas() {
             </button>
           </div>
         </div>
+      ) : null}
+
+      {pendingForMe.length > 0 ? (
+        <Card title={t('matches.pendingTitle')}>
+          <p style={{ margin: '0 0 8px', opacity: 0.8 }}>{t('matches.pendingHelp')}</p>
+          <ul className="rqMatchesList" aria-label={t('matches.pendingAria')}>
+            {pendingForMe.map((m) => {
+              const winner = profilesById.get(m.winner_id)
+              const loser = profilesById.get(m.loser_id)
+              const courtName = m?.court?.name ?? null
+
+              return (
+                <li key={m.id} className="rqMatchRowPremium">
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <strong>{formatProfileLabel(winner)}</strong>
+                    <span style={{ opacity: 0.7 }}>{t('matches.verbWon')}</span>
+                    <strong>{formatProfileLabel(loser)}</strong>
+                  </div>
+
+                  <div style={styles.meta}>
+                    {formatDate(m.played_at)}
+                    {m.score ? ` · ${t('matches.scoreShort')}: ${m.score}` : ''}
+                    {courtName ? ` · ${t('matches.courtShort')}: ${courtName}` : ''}
+                  </div>
+
+                  <div style={styles.rowActions}>
+                    <button
+                      type="button"
+                      style={styles.button}
+                      disabled={loading}
+                      onClick={async () => {
+                        setToast(null)
+                        try {
+                          setLoading(true)
+                          await confirmMatchResult({ matchId: m.id })
+                          setToast({ message: t('matches.confirmSuccess') })
+                          await refreshMatches()
+                        } catch (err) {
+                          setToast({ message: getErrorMessage(err, t('matches.confirmError')) })
+                        } finally {
+                          setLoading(false)
+                        }
+                      }}
+                    >
+                      {t('matches.confirmResult')}
+                    </button>
+                    <button
+                      type="button"
+                      style={styles.button}
+                      disabled={loading}
+                      onClick={async () => {
+                        const reason = window.prompt(t('matches.disputePrompt'))
+                        if (reason === null) return
+                        setToast(null)
+                        try {
+                          setLoading(true)
+                          await disputeMatchResult({ matchId: m.id, reason })
+                          setToast({ message: t('matches.disputeSuccess') })
+                          await refreshMatches()
+                        } catch (err) {
+                          setToast({ message: getErrorMessage(err, t('matches.disputeError')) })
+                        } finally {
+                          setLoading(false)
+                        }
+                      }}
+                    >
+                      {t('matches.disputeResult')}
+                    </button>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </Card>
       ) : null}
 
       {toast ? <div style={styles.toast}>{toast.message}</div> : null}
@@ -345,17 +443,32 @@ export default function Partidas() {
 
               try {
                 setLoading(true)
-                await reportMatch({
-                  challengeId: challenge.id,
-                  winnerId,
-                  score: outcome.score,
-                  playedAt: playedAt.toISOString(),
-                  courtId: courtId || null,
-                })
-                setToast({ message: t('matches.reported') })
-                setChallenge(null)
-                await refreshMatches()
-                navigate('/ranking')
+
+                if (ANTI_FRAUD_V1_ENABLED) {
+                  await reportMatchAntiFraud({
+                    challengeId: challenge.id,
+                    winnerId,
+                    score: outcome.score,
+                    playedAt: playedAt.toISOString(),
+                    courtId: courtId || null,
+                  })
+                  setToast({ message: t('postMatch.pendingBody') })
+                  setChallenge(null)
+                  await refreshMatches()
+                  navigate('/partidas', { replace: true, state: { postMatch: { kind: 'reported_pending' } } })
+                } else {
+                  await reportMatch({
+                    challengeId: challenge.id,
+                    winnerId,
+                    score: outcome.score,
+                    playedAt: playedAt.toISOString(),
+                    courtId: courtId || null,
+                  })
+                  setToast({ message: t('matches.reported') })
+                  setChallenge(null)
+                  await refreshMatches()
+                  navigate('/ranking')
+                }
               } catch (err) {
                 setToast({ message: getErrorMessage(err, t('matches.reportError')) })
               } finally {

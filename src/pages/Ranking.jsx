@@ -9,8 +9,17 @@ import { getErrorMessage } from '../services/supabaseFetch.js'
 
 function canChallenge({ myPos, targetPos, range }) {
   if (!Number.isFinite(myPos) || !Number.isFinite(targetPos) || !Number.isFinite(range)) return false
-  if (targetPos >= myPos) return false // precisa estar acima (posição menor)
-  return myPos - targetPos <= range
+
+  // Novo comportamento:
+  // - Pode desafiar até {range} posições ACIMA.
+  // - Pode desafiar QUALQUER jogador ABAIXO.
+  if (targetPos < myPos) {
+    return myPos - targetPos <= range
+  }
+  if (targetPos > myPos) {
+    return true
+  }
+  return false
 }
 
 function getRankPosition(row) {
@@ -158,6 +167,9 @@ export default function Ranking() {
               const isYou = Boolean(r.is_me)
               const pos = getRankPosition(r)
               const isElite = pos === 1
+              const rep = r.reputation_score != null ? Number(r.reputation_score) : null
+              const hasValidRep = rep != null && Number.isFinite(rep)
+              const isLowTrust = hasValidRep && rep < 5
               const isChallengeable =
                 Number.isFinite(myPos) &&
                 !isYou &&
@@ -176,6 +188,16 @@ export default function Ranking() {
                     <div style={{ marginTop: 6, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       {isElite ? <span className="arenaPill arenaPillElite">ELITE</span> : null}
                       {isYou ? <span className="arenaPill">{t('ranking.badgeYou')}</span> : null}
+                      {hasValidRep ? (
+                        <>
+                          <span className="arenaPill" title={t('ranking.reputationTooltip')}>
+                            {t('ranking.reputationScore', { score: rep })}
+                          </span>
+                          {isLowTrust ? (
+                            <span className="arenaPill arenaPillWarning">{t('ranking.lowTrustBadge')}</span>
+                          ) : null}
+                        </>
+                      ) : null}
                     </div>
                   </div>
 
@@ -240,7 +262,19 @@ export default function Ranking() {
                     setToast({ message: t('ranking.toast.challengeCreated') })
                     navigate('/desafios', { replace: false, state: { message: t('ranking.toast.challengeCreated') } })
                   } catch (e) {
-                    setToast({ message: getErrorMessage(e, t('ranking.toast.challengeCreateError')) })
+                    const msg = getErrorMessage(e, t('ranking.toast.challengeCreateError'))
+                    const code = e?.message || ''
+                    const friendly =
+                      code === 'max_challenges_per_day_reached'
+                        ? t('ranking.toast.maxChallengesPerDay')
+                        : code === 'max_active_challenges_reached'
+                          ? t('ranking.toast.maxActiveChallenges')
+                          : code === 'reputation_too_low_for_challenges'
+                            ? t('ranking.toast.reputationTooLowForChallenges')
+                            : code === 'reputation_cannot_challenge_above'
+                              ? t('ranking.toast.reputationCannotChallengeAbove')
+                              : msg
+                    setToast({ message: friendly })
                     setModalTarget(null)
                   }
                 }}
