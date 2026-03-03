@@ -42,7 +42,7 @@ function makeInitialState() {
     // “usuário atual” mockado
     currentUserId: getDefaultCurrentUserId(players),
     lang: DEFAULT_LANG,
-    auth: { isAuthenticated: false, userId: null, email: null },
+    auth: { isAuthenticated: false, userId: null, email: null, loading: true },
     selectedCategoryId: DEFAULT_CATEGORY_ID,
     profile: { displayName: null, loaded: false },
     cart: { items: [] }, // [{ productId, qty }]
@@ -104,7 +104,7 @@ function safeLoadFromStorage() {
     const lang = SUPPORTED_LANGS.includes(parsed.lang) ? parsed.lang : DEFAULT_LANG
 
     // Auth nunca é restaurado do storage – sempre vem do Supabase via AuthBridge.
-    const auth = { isAuthenticated: false, userId: null, email: null }
+    const auth = { isAuthenticated: false, userId: null, email: null, loading: true }
 
     const selectedCategoryId =
       typeof parsed.selectedCategoryId === 'string' && parsed.selectedCategoryId.trim()
@@ -539,10 +539,10 @@ function reducer(state, action) {
     case 'LOGIN': {
       const userEmail = action.payload?.userEmail
       if (typeof userEmail !== 'string') return state
-      return { ...state, auth: { isAuthenticated: true, userEmail } }
+      return { ...state, auth: { isAuthenticated: true, userId: null, email: userEmail, loading: false } }
     }
     case 'LOGOUT': {
-      return { ...state, auth: { isAuthenticated: false, userEmail: '' } }
+      return { ...state, auth: { isAuthenticated: false, userId: null, email: null, loading: false } }
     }
     case 'SET_SESSION': {
       const { isAuthenticated, userId, email } = action.payload ?? {}
@@ -552,6 +552,7 @@ function reducer(state, action) {
           isAuthenticated: Boolean(isAuthenticated),
           userId: userId ?? null,
           email: email ?? null,
+          loading: false,
         },
       }
     }    

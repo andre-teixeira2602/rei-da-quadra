@@ -8,6 +8,10 @@ export default function ProtectedRoute({ children }) {
   const { t } = useI18n()
   const { auth } = useAppState()
 
+  if (auth?.loading !== false) {
+    return <div style={{ padding: 24 }}>Carregando...</div>
+  }
+
   if (auth?.isAuthenticated) return children ?? <Outlet />
 
   return (
