@@ -39,6 +39,7 @@ export default function App() {
     })
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!alive) return
       const user = session?.user
       actions.setSession({
         isAuthenticated: !!user,
