@@ -10,7 +10,7 @@ import { useIsMobile } from '../../../layout/useIsMobile.js'
 import { ClayButton } from '../../../design-system/components/Button/Button.jsx'
 import { getChallengeById } from '../../../services/challenges.js'
 import { listActiveCourts } from '../../../services/courts.js'
-import { reportMatch } from '../../../services/matches.js'
+import { reportMatchV2 } from '../../../services/matches.js'
 import { formatProfileLabel, getProfilesByIds } from '../../../services/profiles.js'
 import { getErrorMessage } from '../../../services/supabaseFetch.js'
 
@@ -195,14 +195,14 @@ export default function RecordMatchPage() {
 
     try {
       setLoading(true)
-      await reportMatch({
+      await reportMatchV2({
         challengeId: challenge.id,
         winnerId,
         score: outcome.score,
         playedAt: playedAt.toISOString(),
         courtId: courtId || null,
       })
-      navigate('/partidas', { replace: true, state: { postMatch: { kind: 'reported' } } })
+      navigate('/partidas', { replace: true, state: { postMatch: { kind: 'pending_confirmation' } } })
     } catch (e) {
       setToast({ message: getErrorMessage(e, t('matches.reportError')) })
     } finally {

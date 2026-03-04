@@ -5,7 +5,7 @@ import { useI18n } from '../i18n/useI18n.js'
 import { useAppState } from '../state/AppState.jsx'
 import { formatDate } from '../state/utils.js'
 import { getChallengeById } from '../services/challenges.js'
-import { listMatchesByCategory, reportMatch } from '../services/matches.js'
+import { listMatchesByCategory, confirmMatchResult, disputeMatchResult } from '../services/matches.js'
 import { listActiveCourts } from '../services/courts.js'
 import { formatProfileLabel, getProfilesByIds } from '../services/profiles.js'
 import { getErrorMessage } from '../services/supabaseFetch.js'
@@ -172,6 +172,12 @@ export default function Partidas() {
   const [matches, setMatches] = useState([])
   const [profilesById, setProfilesById] = useState(new Map())
 
+  // Estados para fluxo de confirmação/disputa v2
+  const [confirmingMatchId, setConfirmingMatchId] = useState(null)
+  const [disputingMatchId, setDisputingMatchId] = useState(null)
+  const [disputeReason, setDisputeReason] = useState('')
+  const [actionLoading, setActionLoading] = useState(false)
+
   const challengeId = searchParams.get('challenge') || ''
   const effectiveCategoryId = challenge?.category_id ?? selectedCategoryId
   const postMatch = location?.state?.postMatch ?? null
@@ -216,6 +222,41 @@ export default function Partidas() {
     refreshMatches()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth?.isAuthenticated, effectiveCategoryId, t])
+
+  async function handleConfirmMatch(matchId) {
+    setActionLoading(true)
+    setToast(null)
+    try {
+      await confirmMatchResult({ matchId })
+      setToast({ message: t('matches.confirmSuccess'), kind: 'success' })
+      setConfirmingMatchId(null)
+      await refreshMatches()
+    } catch (e) {
+      setToast({ message: getErrorMessage(e, t('matches.confirmError')), kind: 'error' })
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  async function handleDisputeMatch(matchId) {
+    if (!disputeReason.trim()) {
+      setToast({ message: t('matches.disputeReason') + ' é obrigatório.', kind: 'error' })
+      return
+    }
+    setActionLoading(true)
+    setToast(null)
+    try {
+      await disputeMatchResult({ matchId, reason: disputeReason })
+      setToast({ message: t('matches.disputeSuccess'), kind: 'success' })
+      setDisputingMatchId(null)
+      setDisputeReason('')
+      await refreshMatches()
+    } catch (e) {
+      setToast({ message: getErrorMessage(e, t('matches.disputeError')), kind: 'error' })
+    } finally {
+      setActionLoading(false)
+    }
+  }
 
   useEffect(() => {
     let alive = true
@@ -297,12 +338,20 @@ export default function Partidas() {
 
       {postMatch ? (
         <div className="arenaCard arenaSuccessGlow">
-          <div className="arenaSectionKicker">{t('postMatch.title')}</div>
-          <div style={{ marginTop: 8, fontWeight: 850, letterSpacing: 0.2 }}>{t('postMatch.body')}</div>
+          <div className="arenaSectionKicker">
+            {postMatch.kind === 'pending_confirmation' ? t('matches.awaitingYourConfirmation') : t('postMatch.title')}
+          </div>
+          <div style={{ marginTop: 8, fontWeight: 850, letterSpacing: 0.2 }}>
+            {postMatch.kind === 'pending_confirmation'
+              ? t('matches.pendingConfirmationBanner')
+              : t('postMatch.body')}
+          </div>
           <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button type="button" className="arenaButton arenaButtonPrimary" onClick={() => navigate('/ranking')}>
-              {t('postMatch.ctaRanking')}
-            </button>
+            {postMatch.kind !== 'pending_confirmation' && (
+              <button type="button" className="arenaButton arenaButtonPrimary" onClick={() => navigate('/ranking')}>
+                {t('postMatch.ctaRanking')}
+              </button>
+            )}
             <button type="button" className="arenaButton arenaButtonGhost" onClick={() => navigate('/desafios')}>
               {t('postMatch.ctaChallenges')}
             </button>
@@ -496,6 +545,14 @@ export default function Partidas() {
             const loser = profilesById.get(m.loser_id)
             const courtName = m?.court?.name ?? null
 
+            const isPending = m.status === 'pending_confirmation'
+            const isConfirmed = m.status === 'confirmed'
+            const isDisputed = m.status === 'disputed'
+            const currentUserId = auth?.user?.id
+            const isOpponent = currentUserId && m.reported_by !== currentUserId &&
+              (m.winner_id === currentUserId || m.loser_id === currentUserId)
+            const isDisputingThis = disputingMatchId === m.id
+
             return (
               <li key={m.id} className="rqMatchRowPremium">
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -510,11 +567,88 @@ export default function Partidas() {
                   {courtName ? ` · ${t('matches.courtShort')}: ${courtName}` : ''}
                 </div>
 
-                {m.challenge_id ? (
-                  <div>
+                {/* Badge de status */}
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {isPending && (
+                    <span style={{ ...styles.badge, color: '#f5a623', borderColor: '#f5a623' }}>
+                      {t('matches.pendingConfirmation')}
+                    </span>
+                  )}
+                  {isConfirmed && (
+                    <span style={{ ...styles.badge, color: '#4caf50', borderColor: '#4caf50' }}>
+                      {t('matches.confirmed')}
+                    </span>
+                  )}
+                  {isDisputed && (
+                    <span style={{ ...styles.badge, color: '#f44336', borderColor: '#f44336' }}>
+                      {t('matches.disputed')}
+                    </span>
+                  )}
+                  {m.challenge_id && (
                     <span style={styles.badge}>{t('matches.linkedToChallenge')}</span>
+                  )}
+                </div>
+
+                {/* Botões de confirmar/contestar para o adversário */}
+                {isPending && isOpponent && !isDisputingThis && (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
+                    <button
+                      type="button"
+                      className="arenaButton arenaButtonPrimary"
+                      style={{ fontSize: 12, padding: '5px 12px' }}
+                      disabled={actionLoading}
+                      onClick={() => handleConfirmMatch(m.id)}
+                    >
+                      {t('matches.confirmResult')}
+                    </button>
+                    <button
+                      type="button"
+                      className="arenaButton arenaButtonGhost"
+                      style={{ fontSize: 12, padding: '5px 12px', color: '#f44336', borderColor: '#f44336' }}
+                      disabled={actionLoading}
+                      onClick={() => { setDisputingMatchId(m.id); setDisputeReason('') }}
+                    >
+                      {t('matches.disputeResult')}
+                    </button>
                   </div>
-                ) : null}
+                )}
+
+                {/* Formulário de contestação */}
+                {isDisputingThis && (
+                  <div style={{ marginTop: 8, display: 'grid', gap: 8 }}>
+                    <label style={styles.field}>
+                      <span style={{ fontSize: 12, opacity: 0.8 }}>{t('matches.disputeReason')}</span>
+                      <textarea
+                        rows={3}
+                        value={disputeReason}
+                        onChange={(e) => setDisputeReason(e.target.value)}
+                        placeholder={t('matches.disputeReasonPlaceholder')}
+                        style={{ ...styles.input, resize: 'vertical', fontSize: 13 }}
+                        disabled={actionLoading}
+                      />
+                    </label>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        type="button"
+                        className="arenaButton arenaButtonPrimary"
+                        style={{ fontSize: 12, padding: '5px 12px', background: '#f44336', borderColor: '#f44336' }}
+                        disabled={actionLoading || !disputeReason.trim()}
+                        onClick={() => handleDisputeMatch(m.id)}
+                      >
+                        {actionLoading ? t('common.saving') : t('matches.disputeSubmit')}
+                      </button>
+                      <button
+                        type="button"
+                        className="arenaButton arenaButtonGhost"
+                        style={{ fontSize: 12, padding: '5px 12px' }}
+                        disabled={actionLoading}
+                        onClick={() => { setDisputingMatchId(null); setDisputeReason('') }}
+                      >
+                        {t('matches.disputeCancel')}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </li>
             )
           })}
