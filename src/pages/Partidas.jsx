@@ -8,7 +8,7 @@ import { getChallengeById } from '../services/challenges.js'
 import { listMatchesByCategory, confirmMatchResult, disputeMatchResult } from '../services/matches.js'
 import { listActiveCourts } from '../services/courts.js'
 import { formatProfileLabel, getProfilesByIds } from '../services/profiles.js'
-import { getErrorMessage } from '../services/supabaseFetch.js'
+import { getErrorMessage, getRpcErrorKey } from '../services/supabaseFetch.js'
 
 import Card from '../design-system/components/Card/Card.jsx'
 import { SecondaryButton } from '../design-system/components/Button/Button.jsx'
@@ -232,7 +232,8 @@ export default function Partidas() {
       setConfirmingMatchId(null)
       await refreshMatches()
     } catch (e) {
-      setToast({ message: getErrorMessage(e, t('matches.confirmError')), kind: 'error' })
+      const rpcKey1 = getRpcErrorKey(e)
+      setToast({ message: rpcKey1 ? t(rpcKey1) : getErrorMessage(e, t('matches.confirmError')), kind: 'error' })
     } finally {
       setActionLoading(false)
     }
@@ -252,7 +253,8 @@ export default function Partidas() {
       setDisputeReason('')
       await refreshMatches()
     } catch (e) {
-      setToast({ message: getErrorMessage(e, t('matches.disputeError')), kind: 'error' })
+      const rpcKey2 = getRpcErrorKey(e)
+      setToast({ message: rpcKey2 ? t(rpcKey2) : getErrorMessage(e, t('matches.disputeError')), kind: 'error' })
     } finally {
       setActionLoading(false)
     }

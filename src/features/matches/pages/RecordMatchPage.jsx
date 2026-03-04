@@ -12,7 +12,7 @@ import { getChallengeById } from '../../../services/challenges.js'
 import { listActiveCourts } from '../../../services/courts.js'
 import { reportMatchV2 } from '../../../services/matches.js'
 import { formatProfileLabel, getProfilesByIds } from '../../../services/profiles.js'
-import { getErrorMessage } from '../../../services/supabaseFetch.js'
+import { getErrorMessage, getRpcErrorKey } from '../../../services/supabaseFetch.js'
 
 function toLocalDateTimeInputValue(d) {
   const pad = (n) => String(n).padStart(2, '0')
@@ -204,7 +204,8 @@ export default function RecordMatchPage() {
       })
       navigate('/partidas', { replace: true, state: { postMatch: { kind: 'pending_confirmation' } } })
     } catch (e) {
-      setToast({ message: getErrorMessage(e, t('matches.reportError')) })
+      const rpcKey = getRpcErrorKey(e)
+      setToast({ message: rpcKey ? t(rpcKey) : getErrorMessage(e, t('matches.reportError')) })
     } finally {
       setLoading(false)
     }

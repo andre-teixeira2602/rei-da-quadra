@@ -215,6 +215,21 @@ export const translations = {
     'matches.reportedBy': 'Registrado por',
     'matches.you': 'você',
 
+    // Erros da RPC (mensagens amigáveis)
+    'rpcError.match_already_reported': 'Este desafio já tem uma partida registrada. Crie um novo desafio para jogar novamente.',
+    'rpcError.challenge_not_found': 'Desafio não encontrado.',
+    'rpcError.not_authorized': 'Você não tem permissão para registrar esta partida.',
+    'rpcError.challenge_expired': 'Este desafio já expirou.',
+    'rpcError.invalid_status': 'Este desafio não está no status correto para registrar uma partida. Verifique se o desafio foi aceito.',
+    'rpcError.invalid_winner': 'Vencedor inválido. Selecione um dos jogadores do desafio.',
+    'rpcError.played_at_in_future': 'A data da partida não pode ser no futuro.',
+    'rpcError.played_at_too_old': 'A data da partida não pode ser anterior a 60 dias.',
+    'rpcError.ranking_rows_missing': 'Erro no ranking: jogadores não encontrados na categoria.',
+    'rpcError.match_not_found': 'Partida não encontrada.',
+    'rpcError.already_confirmed': 'Esta partida já foi confirmada.',
+    'rpcError.already_disputed': 'Esta partida já foi contestada.',
+    'rpcError.not_pending': 'Esta partida não está aguardando confirmação.',
+
     // Dashboard
     'dashboard.title': 'Home',
     'dashboard.loadError': 'Não foi possível carregar o dashboard.',
@@ -495,6 +510,21 @@ export const translations = {
     'matches.reportedBy': 'Reported by',
     'matches.you': 'you',
 
+    // RPC Errors (friendly messages)
+    'rpcError.match_already_reported': 'This challenge already has a match recorded. Create a new challenge to play again.',
+    'rpcError.challenge_not_found': 'Challenge not found.',
+    'rpcError.not_authorized': 'You are not authorized to record this match.',
+    'rpcError.challenge_expired': 'This challenge has already expired.',
+    'rpcError.invalid_status': 'This challenge is not in the correct status to record a match. Make sure the challenge was accepted.',
+    'rpcError.invalid_winner': 'Invalid winner. Select one of the challenge players.',
+    'rpcError.played_at_in_future': 'The match date cannot be in the future.',
+    'rpcError.played_at_too_old': 'The match date cannot be older than 60 days.',
+    'rpcError.ranking_rows_missing': 'Ranking error: players not found in the category.',
+    'rpcError.match_not_found': 'Match not found.',
+    'rpcError.already_confirmed': 'This match has already been confirmed.',
+    'rpcError.already_disputed': 'This match has already been disputed.',
+    'rpcError.not_pending': 'This match is not awaiting confirmation.',
+
     'dashboard.title': 'Home',
     'dashboard.loadError': 'Could not load dashboard.',
     'dashboard.category': 'Category',
@@ -771,6 +801,21 @@ export const translations = {
     'matches.reportedBy': 'Registrado por',
     'matches.you': 'tú',
 
+    // Errores de RPC (mensajes amigables)
+    'rpcError.match_already_reported': 'Este desafío ya tiene un partido registrado. Crea un nuevo desafío para jugar de nuevo.',
+    'rpcError.challenge_not_found': 'Desafío no encontrado.',
+    'rpcError.not_authorized': 'No tienes permiso para registrar este partido.',
+    'rpcError.challenge_expired': 'Este desafío ya ha expirado.',
+    'rpcError.invalid_status': 'Este desafío no está en el estado correcto para registrar un partido.',
+    'rpcError.invalid_winner': 'Ganador inválido. Selecciona uno de los jugadores del desafío.',
+    'rpcError.played_at_in_future': 'La fecha del partido no puede ser en el futuro.',
+    'rpcError.played_at_too_old': 'La fecha del partido no puede ser anterior a 60 días.',
+    'rpcError.ranking_rows_missing': 'Error en el ranking: jugadores no encontrados en la categoría.',
+    'rpcError.match_not_found': 'Partido no encontrado.',
+    'rpcError.already_confirmed': 'Este partido ya fue confirmado.',
+    'rpcError.already_disputed': 'Este partido ya fue impugnado.',
+    'rpcError.not_pending': 'Este partido no está esperando confirmación.',
+
     'dashboard.title': 'Inicio',
     'dashboard.loadError': 'No se pudo cargar el dashboard.',
     'dashboard.category': 'Categoría',
@@ -1046,6 +1091,21 @@ export const translations = {
     'matches.awaitingYourConfirmation': 'En attente de votre confirmation',
     'matches.reportedBy': 'Enregistré par',
     'matches.you': 'vous',
+
+    // Erreurs RPC (messages conviviaux)
+    'rpcError.match_already_reported': 'Ce défi a déjà un match enregistré. Créez un nouveau défi pour rejouer.',
+    'rpcError.challenge_not_found': 'Défi introuvable.',
+    'rpcError.not_authorized': "Vous n'\u00eates pas autoris\u00e9 \u00e0 enregistrer ce match.",
+    'rpcError.challenge_expired': 'Ce défi a déjà expiré.',
+    'rpcError.invalid_status': "Ce d\u00e9fi n'est pas dans le bon statut pour enregistrer un match.",
+    'rpcError.invalid_winner': "Gagnant invalide. S\u00e9lectionnez l'un des joueurs du d\u00e9fi.",
+    'rpcError.played_at_in_future': 'La date du match ne peut pas être dans le futur.',
+    'rpcError.played_at_too_old': 'La date du match ne peut pas être antérieure à 60 jours.',
+    'rpcError.ranking_rows_missing': 'Erreur de classement : joueurs introuvables dans la catégorie.',
+    'rpcError.match_not_found': 'Match introuvable.',
+    'rpcError.already_confirmed': 'Ce match a déjà été confirmé.',
+    'rpcError.already_disputed': 'Ce match a déjà été contesté.',
+    'rpcError.not_pending': "Ce match n'attend pas de confirmation.",
 
     'dashboard.title': 'Accueil',
     'dashboard.loadError': 'Impossible de charger le tableau de bord.',
