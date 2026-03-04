@@ -202,7 +202,7 @@ export default function RecordMatchPage() {
         playedAt: playedAt.toISOString(),
         courtId: courtId || null,
       })
-      navigate('/partidas', { replace: true, state: { postMatch: { kind: 'pending_confirmation' } } })
+      navigate('/partidas', { replace: true, state: { postMatch: { kind: 'pending_confirm' } } })
     } catch (e) {
       const rpcKey = getRpcErrorKey(e)
       setToast({ message: rpcKey ? t(rpcKey) : getErrorMessage(e, t('matches.reportError')) })

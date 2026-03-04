@@ -341,15 +341,15 @@ export default function Partidas() {
       {postMatch ? (
         <div className="arenaCard arenaSuccessGlow">
           <div className="arenaSectionKicker">
-            {postMatch.kind === 'pending_confirmation' ? t('matches.awaitingYourConfirmation') : t('postMatch.title')}
+            {postMatch.kind === 'pending_confirm' ? t('matches.awaitingYourConfirmation') : t('postMatch.title')}
           </div>
           <div style={{ marginTop: 8, fontWeight: 850, letterSpacing: 0.2 }}>
-            {postMatch.kind === 'pending_confirmation'
+            {postMatch.kind === 'pending_confirm'
               ? t('matches.pendingConfirmationBanner')
               : t('postMatch.body')}
           </div>
           <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            {postMatch.kind !== 'pending_confirmation' && (
+            {postMatch.kind !== 'pending_confirm' && (
               <button type="button" className="arenaButton arenaButtonPrimary" onClick={() => navigate('/ranking')}>
                 {t('postMatch.ctaRanking')}
               </button>
@@ -547,7 +547,7 @@ export default function Partidas() {
             const loser = profilesById.get(m.loser_id)
             const courtName = m?.court?.name ?? null
 
-            const isPending = m.status === 'pending_confirmation'
+            const isPending = m.status === 'pending_confirm'
             const isConfirmed = m.status === 'confirmed'
             const isDisputed = m.status === 'disputed'
             const currentUserId = auth?.user?.id
