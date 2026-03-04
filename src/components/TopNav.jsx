@@ -46,6 +46,11 @@ export default function TopNav() {
                 </NavLink>
               </li>
               <li>
+                <NavLink to="/quadras" className={({ isActive }) => `topNavLink ${isActive ? 'topNavLinkActive' : ''}`}>
+                  {t('menu.courts')}
+                </NavLink>
+              </li>
+              <li>
                 <NavLink to="/rei" className={({ isActive }) => `topNavLink ${isActive ? 'topNavLinkActive' : ''}`}>
                   {t('menu.king')}
                 </NavLink>

@@ -14,6 +14,7 @@ import Partidas from './pages/Partidas'
 import Login from './pages/Login'
 import Perfil from './pages/Perfil'
 import RecordMatchPage from './features/matches/pages/RecordMatchPage'
+import Quadras from './pages/Quadras'
 
 import { useAppActions, useAppState } from './state/AppState'
 import { getMyProfile } from './services/profiles'
@@ -138,6 +139,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Partidas />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/quadras"
+            element={
+              <ProtectedRoute>
+                <Quadras />
               </ProtectedRoute>
             }
           />
