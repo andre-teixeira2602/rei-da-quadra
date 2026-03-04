@@ -3,31 +3,12 @@ import { createContext, useContext, useEffect, useMemo, useReducer } from 'react
 import { countKingDefenses, getPlayerById, getTopActivePlayer, monthKey, swapPositions } from './utils.js'
 import { DEFAULT_CATEGORY_ID } from '../config/mvp.js'
 
-const STORAGE_KEY = 'rei-da-quadra:state:v2'
+const STORAGE_KEY = 'rei-da-quadra:state:v3'
 const CATEGORY = 'B'
 const DEFAULT_COURT_NAME = 'Quadra Principal'
 const DEFAULT_LANG = 'pt-BR'
 const SUPPORTED_LANGS = ['pt-BR', 'en', 'es', 'fr']
 const KING_MONTHLY_DEFENSE_GOAL = 2
-
-// Detecta o idioma preferido do navegador e mapeia para um idioma suportado.
-// Garante que usuários brasileiros comecem em PT-BR automaticamente.
-function detectBrowserLang() {
-  try {
-    const langs = navigator.languages?.length ? navigator.languages : [navigator.language]
-    for (const l of langs) {
-      if (!l) continue
-      const lower = l.toLowerCase()
-      if (lower.startsWith('pt')) return 'pt-BR'
-      if (lower.startsWith('fr')) return 'fr'
-      if (lower.startsWith('es')) return 'es'
-      if (lower.startsWith('en')) return 'en'
-    }
-  } catch {
-    // fallback silencioso se navigator não estiver disponível
-  }
-  return DEFAULT_LANG
-}
 
 function sortByPosition(players) {
   return [...players].sort((a, b) => a.position - b.position)
@@ -60,7 +41,7 @@ function makeInitialState() {
   return {
     // “usuário atual” mockado
     currentUserId: getDefaultCurrentUserId(players),
-    lang: detectBrowserLang(),
+    lang: DEFAULT_LANG,
     auth: { isAuthenticated: false, userId: null, email: null },
     selectedCategoryId: DEFAULT_CATEGORY_ID,
     profile: { displayName: null, loaded: false },
@@ -120,8 +101,8 @@ function safeLoadFromStorage() {
       ? candidateCurrentUserId
       : getDefaultCurrentUserId(players)
 
-    // Se o idioma salvo for válido, usa-o. Caso contrário, detecta pelo navegador.
-    const lang = SUPPORTED_LANGS.includes(parsed.lang) ? parsed.lang : detectBrowserLang()
+    // Se o idioma salvo for válido, usa-o. Caso contrário, usa PT-BR como padrão.
+    const lang = SUPPORTED_LANGS.includes(parsed.lang) ? parsed.lang : DEFAULT_LANG
 
     // Auth nunca é restaurado do storage – sempre vem do Supabase via AuthBridge.
     const auth = { isAuthenticated: false, userId: null, email: null }
