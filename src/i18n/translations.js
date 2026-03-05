@@ -71,6 +71,17 @@ export const translations = {
     'login.passwordRequired': 'Senha é obrigatória.',
     'login.signInError': 'Erro ao entrar.',
 
+    // Quadra (Court)
+    'court.label': 'Quadra',
+    'court.select': 'Selecione uma quadra',
+    'court.loadError': 'Não foi possível carregar as quadras.',
+    'court.ariaLabel': 'Selecionar quadra',
+    'courts.publicDirectory': 'Diretório Público',
+    'courts.adminPanel': 'Painel Admin',
+    'courts.selectCourt': 'Selecionar',
+    'courts.descriptionLabel': 'Descrição',
+    'courts.descriptionPlaceholder': 'Ex: Quadra com iluminação noturna',
+
     // Categoria
     'category.label': 'Categoria',
     'category.notMember': 'Você não participa desta categoria.',
@@ -155,14 +166,21 @@ export const translations = {
     'common.vs': 'vs',
     'common.save': 'Salvar',
     'common.saving': 'Salvando…',
-    'common.loading': 'Carregando…',
     'common.refresh': 'Atualizar',
     'common.refreshList': 'Atualizar lista',
+    'common.loading': 'Carregando…',
 
     // Home
     'home.title': 'Home',
     'home.subtitle': 'Visão geral do Rei da Quadra e acesso rápido às principais telas.',
+    'home.court': 'Quadra',
+    'home.category': 'Categoria',
+    'home.king': 'Rei da Quadra',
+    'home.selectCourtCategory': 'Selecione uma quadra e categoria no topo para começar.',
+    'home.loadError': 'Não foi possível carregar informações da quadra.',
     'home.resetDemo': 'Resetar demo',
+    'common.edit': 'Editar',
+    'common.deactivate': 'Desativar',
 
     // Matches
     'matches.title': 'Partidas',

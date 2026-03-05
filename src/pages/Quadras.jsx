@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n/useI18n.js'
-import { useAppState } from '../state/AppState.jsx'
-import { listAllCourts, createCourt, updateCourt, deactivateCourt } from '../services/courts.js'
+import { useAppState, useAppActions } from '../state/AppState.jsx'
+import { listPublicCourts, listAllCourts, createCourt, updateCourt, deactivateCourt } from '../services/courts.js'
 import { getErrorMessage } from '../services/supabaseFetch.js'
 import Card from '../design-system/components/Card/Card.jsx'
 import { SecondaryButton } from '../design-system/components/Button/Button.jsx'
@@ -71,13 +71,18 @@ const styles = {
   },
 }
 
-const EMPTY_FORM = { name: '', city: '', address: '', surface: '' }
+const EMPTY_FORM = { name: '', city: '', address: '', surface: '', description: '' }
 
 export default function Quadras() {
   const { t } = useI18n()
   const { auth } = useAppState()
+  const { setSelectedCourt, setCourts } = useAppActions()
 
-  const [courts, setCourts] = useState([])
+  // Modo: 'public' (diretório público) ou 'admin' (gerenciamento)
+  const [mode, setMode] = useState('public')
+
+  const [publicCourts, setPublicCourts] = useState([])
+  const [allCourts, setAllCourts] = useState([])
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState(null)
 
@@ -88,12 +93,26 @@ export default function Quadras() {
 
   const [confirmDeactivate, setConfirmDeactivate] = useState(null)
 
-  async function loadCourts() {
+  async function loadPublicCourts() {
+    setLoading(true)
+    setToast(null)
+    try {
+      const rows = await listPublicCourts()
+      setPublicCourts(rows)
+      setCourts({ courts: rows })
+    } catch (e) {
+      setToast({ kind: 'error', message: getErrorMessage(e, t('courts.loadError')) })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function loadAllCourts() {
     setLoading(true)
     setToast(null)
     try {
       const rows = await listAllCourts()
-      setCourts(rows)
+      setAllCourts(rows)
     } catch (e) {
       setToast({ kind: 'error', message: getErrorMessage(e, t('courts.loadError')) })
     } finally {
@@ -102,9 +121,16 @@ export default function Quadras() {
   }
 
   useEffect(() => {
-    loadCourts()
+    loadPublicCourts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (mode === 'admin' && auth?.isAuthenticated) {
+      loadAllCourts()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, auth?.isAuthenticated])
 
   function openNewForm() {
     setEditingCourt(null)
@@ -120,6 +146,7 @@ export default function Quadras() {
       city: court.city || '',
       address: court.address || '',
       surface: court.surface || '',
+      description: court.description || '',
     })
     setShowForm(true)
     setToast(null)
@@ -148,7 +175,8 @@ export default function Quadras() {
         setToast({ kind: 'success', message: t('courts.createSuccess') })
       }
       cancelForm()
-      await loadCourts()
+      await loadAllCourts()
+      await loadPublicCourts()
     } catch (e) {
       setToast({ kind: 'error', message: getErrorMessage(e, t('courts.saveError')) })
     } finally {
@@ -163,7 +191,8 @@ export default function Quadras() {
       await deactivateCourt({ id: court.id })
       setToast({ kind: 'success', message: t('courts.deactivateSuccess') })
       setConfirmDeactivate(null)
-      await loadCourts()
+      await loadAllCourts()
+      await loadPublicCourts()
     } catch (e) {
       setToast({ kind: 'error', message: getErrorMessage(e, t('courts.deactivateError')) })
     } finally {
@@ -171,8 +200,13 @@ export default function Quadras() {
     }
   }
 
-  const activeCourts = courts.filter((c) => c.is_active)
-  const inactiveCourts = courts.filter((c) => !c.is_active)
+  function handleSelectCourt(courtId) {
+    setSelectedCourt({ courtId })
+  }
+
+  const displayCourts = mode === 'public' ? publicCourts : allCourts
+  const activeCourts = displayCourts.filter((c) => c.is_active)
+  const inactiveCourts = displayCourts.filter((c) => !c.is_active)
 
   function surfaceLabel(s) {
     if (!s) return null
@@ -209,20 +243,56 @@ export default function Quadras() {
         </div>
       )}
 
+      {/* Abas: Público / Admin */}
+      {auth?.isAuthenticated && (
+        <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 8 }}>
+          <button
+            type="button"
+            onClick={() => setMode('public')}
+            style={{
+              padding: '8px 12px',
+              background: mode === 'public' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              border: 'none',
+              borderRadius: 4,
+              color: 'inherit',
+              cursor: 'pointer',
+              fontWeight: mode === 'public' ? 700 : 400,
+            }}
+          >
+            {t('courts.publicDirectory')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('admin')}
+            style={{
+              padding: '8px 12px',
+              background: mode === 'admin' ? 'rgba(255,255,255,0.1)' : 'transparent',
+              border: 'none',
+              borderRadius: 4,
+              color: 'inherit',
+              cursor: 'pointer',
+              fontWeight: mode === 'admin' ? 700 : 400,
+            }}
+          >
+            {t('courts.adminPanel')}
+          </button>
+        </div>
+      )}
+
       {/* Toolbar */}
       <div style={styles.toolbar}>
-        {auth?.isAuthenticated && !showForm && (
+        {mode === 'admin' && auth?.isAuthenticated && !showForm && (
           <button type="button" className="arenaButton arenaButtonPrimary" onClick={openNewForm}>
             + {t('courts.addCourt')}
           </button>
         )}
-        <SecondaryButton type="button" onClick={loadCourts} disabled={loading}>
+        <SecondaryButton type="button" onClick={() => (mode === 'public' ? loadPublicCourts() : loadAllCourts())} disabled={loading}>
           {loading ? t('common.loading') : t('common.refresh')}
         </SecondaryButton>
       </div>
 
-      {/* Formulário de cadastro / edição */}
-      {showForm && (
+      {/* Formulário de cadastro / edição (apenas admin) */}
+      {mode === 'admin' && showForm && (
         <Card title={editingCourt ? t('courts.editTitle') : t('courts.newTitle')}>
           <form onSubmit={handleSubmit} style={styles.form}>
             <label style={styles.field}>
@@ -263,6 +333,17 @@ export default function Quadras() {
             </label>
 
             <label style={styles.field}>
+              <span>{t('courts.descriptionLabel')}</span>
+              <textarea
+                style={{ ...styles.input, minHeight: 80 }}
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                placeholder={t('courts.descriptionPlaceholder')}
+                disabled={saving}
+              />
+            </label>
+
+            <label style={styles.field}>
               <span>{t('courts.surfaceLabel')}</span>
               <select
                 style={styles.select}
@@ -291,11 +372,11 @@ export default function Quadras() {
         </Card>
       )}
 
-      {/* Lista de quadras ativas */}
+      {/* Lista de quadras */}
       {!loading && activeCourts.length === 0 && !showForm ? (
         <div style={styles.emptyState}>
           <p>{t('courts.noCourts')}</p>
-          {auth?.isAuthenticated && (
+          {mode === 'admin' && auth?.isAuthenticated && (
             <button type="button" className="arenaButton arenaButtonPrimary" onClick={openNewForm} style={{ marginTop: 12 }}>
               + {t('courts.addCourt')}
             </button>
@@ -324,72 +405,60 @@ export default function Quadras() {
                       </p>
                     )}
 
-                    {court.surface && (
-                      <p style={styles.courtMeta}>
-                        {t('courts.surfaceLabel')}: <strong>{surfaceLabel(court.surface)}</strong>
-                      </p>
-                    )}
+                    {court.description && <p style={styles.courtMeta}>{court.description}</p>}
 
-                    {auth?.isAuthenticated && (
-                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-                        <button
-                          type="button"
-                          className="arenaButton arenaButtonGhost"
-                          style={{ fontSize: 12, padding: '4px 12px' }}
-                          onClick={() => openEditForm(court)}
-                        >
-                          {t('common.edit')}
-                        </button>
-                        {confirmDeactivate === court.id ? (
-                          <>
-                            <button
-                              type="button"
-                              className="arenaButton arenaButtonPrimary"
-                              style={{ fontSize: 12, padding: '4px 12px', background: '#f44336', borderColor: '#f44336' }}
-                              disabled={saving}
-                              onClick={() => handleDeactivate(court)}
-                            >
-                              {t('courts.confirmDeactivate')}
-                            </button>
-                            <button
-                              type="button"
-                              className="arenaButton arenaButtonGhost"
-                              style={{ fontSize: 12, padding: '4px 12px' }}
-                              onClick={() => setConfirmDeactivate(null)}
-                            >
-                              {t('common.cancel')}
-                            </button>
-                          </>
-                        ) : (
+                    {court.surface && <p style={styles.courtMeta}>{surfaceLabel(court.surface)}</p>}
+
+                    <div style={styles.rowActions}>
+                      <button
+                        type="button"
+                        className="arenaButton arenaButtonPrimary"
+                        onClick={() => handleSelectCourt(court.id)}
+                        style={{ fontSize: 12 }}
+                      >
+                        {t('courts.selectCourt')}
+                      </button>
+
+                      {mode === 'admin' && (
+                        <>
                           <button
                             type="button"
                             className="arenaButton arenaButtonGhost"
-                            style={{ fontSize: 12, padding: '4px 12px', color: '#f44336', borderColor: '#f44336' }}
-                            onClick={() => setConfirmDeactivate(court.id)}
+                            onClick={() => openEditForm(court)}
+                            style={{ fontSize: 12 }}
+                            disabled={saving}
                           >
-                            {t('courts.deactivate')}
+                            {t('common.edit')}
                           </button>
-                        )}
-                      </div>
-                    )}
+                          <button
+                            type="button"
+                            className="arenaButton arenaButtonGhost"
+                            onClick={() => setConfirmDeactivate(court)}
+                            style={{ fontSize: 12, color: '#f44336' }}
+                            disabled={saving}
+                          >
+                            {t('common.deactivate')}
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
             </section>
           )}
 
-          {/* Quadras inativas (colapsadas) */}
-          {inactiveCourts.length > 0 && (
+          {mode === 'admin' && inactiveCourts.length > 0 && (
             <section>
-              <h2 style={{ fontSize: 13, opacity: 0.4, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', margin: '8px 0 10px' }}>
+              <h2 style={{ fontSize: 13, opacity: 0.55, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', margin: '0 0 10px' }}>
                 {t('courts.inactiveCourts')} ({inactiveCourts.length})
               </h2>
-              <div style={{ display: 'grid', gap: 8 }}>
+              <div style={{ display: 'grid', gap: 10, opacity: 0.6 }}>
                 {inactiveCourts.map((court) => (
-                  <div key={court.id} style={{ ...styles.courtCard, opacity: 0.5 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                      <p style={{ ...styles.courtName, textDecoration: 'line-through' }}>{court.name}</p>
-                      <span style={{ ...styles.badge, color: '#888', borderColor: '#888' }}>
+                  <div key={court.id} style={styles.courtCard}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, flexWrap: 'wrap' }}>
+                      <p style={styles.courtName}>{court.name}</p>
+                      <span style={{ ...styles.badge, color: '#999', borderColor: '#999' }}>
                         {t('courts.inactive')}
                       </span>
                     </div>
@@ -404,6 +473,54 @@ export default function Quadras() {
             </section>
           )}
         </>
+      )}
+
+      {/* Modal de confirmação de desativação */}
+      {confirmDeactivate && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(7, 11, 24, 0.72)',
+            display: 'grid',
+            placeItems: 'center',
+            padding: 16,
+            zIndex: 50,
+            backdropFilter: 'blur(10px)',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setConfirmDeactivate(null)
+          }}
+        >
+          <div className="arenaCard" style={{ width: 'min(400px, 100%)' }}>
+            <h3 className="arenaTitle">{t('courts.confirmDeactivate')}</h3>
+            <p className="arenaText1" style={{ margin: '10px 0 0' }}>
+              {confirmDeactivate.name}
+            </p>
+
+            <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="arenaButton arenaButtonPrimary"
+                onClick={() => handleDeactivate(confirmDeactivate)}
+                disabled={saving}
+              >
+                {t('common.confirm')}
+              </button>
+
+              <button
+                type="button"
+                className="arenaButton arenaButtonGhost"
+                onClick={() => setConfirmDeactivate(null)}
+                disabled={saving}
+              >
+                {t('common.cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

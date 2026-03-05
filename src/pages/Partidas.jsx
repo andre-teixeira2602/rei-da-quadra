@@ -154,7 +154,7 @@ function computeMatchOutcome(sets) {
 
 export default function Partidas() {
   const { t } = useI18n()
-  const { auth, selectedCategoryId } = useAppState()
+  const { auth, selectedCategoryId, selectedCourtId } = useAppState()
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
@@ -199,11 +199,12 @@ export default function Partidas() {
   async function refreshMatches() {
     if (!auth?.isAuthenticated) return
     if (!effectiveCategoryId) return
+    if (!selectedCourtId) return
 
     setLoading(true)
     setError('')
     try {
-      const rows = await listMatchesByCategory({ categoryId: effectiveCategoryId, limit: 50 })
+      const rows = await listMatchesByCategory({ courtId: selectedCourtId, categoryId: effectiveCategoryId, limit: 50 })
       setMatches(rows)
 
       const ids = []
@@ -221,7 +222,7 @@ export default function Partidas() {
   useEffect(() => {
     refreshMatches()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth?.isAuthenticated, effectiveCategoryId, t])
+  }, [auth?.isAuthenticated, effectiveCategoryId, selectedCourtId, t])
 
   async function handleConfirmMatch(matchId) {
     setActionLoading(true)

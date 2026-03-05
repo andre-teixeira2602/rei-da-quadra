@@ -44,6 +44,8 @@ function makeInitialState() {
     lang: DEFAULT_LANG,
     auth: { isAuthenticated: false, userId: null, email: null },
     selectedCategoryId: DEFAULT_CATEGORY_ID,
+    selectedCourtId: null,
+    courts: [],
     profile: { displayName: null, loaded: false },
     cart: { items: [] }, // [{ productId, qty }]
     courtName: DEFAULT_COURT_NAME,
@@ -112,6 +114,11 @@ function safeLoadFromStorage() {
         ? parsed.selectedCategoryId
         : DEFAULT_CATEGORY_ID
 
+    const selectedCourtId =
+      typeof parsed.selectedCourtId === 'string' && parsed.selectedCourtId.trim()
+        ? parsed.selectedCourtId
+        : null
+
     const profile = { displayName: null, loaded: false }
 
     const cartItems = Array.isArray(parsed.cart?.items) ? parsed.cart.items : []
@@ -138,6 +145,8 @@ function safeLoadFromStorage() {
       lang,
       auth,
       selectedCategoryId,
+      selectedCourtId,
+      courts: [],
       profile,
       cart,
       courtName,
@@ -582,6 +591,15 @@ function reducer(state, action) {
     case 'CART_CLEAR': {
       return { ...state, cart: { items: [] } }
     }
+    case 'SET_SELECTED_COURT': {
+      const id = action.payload?.courtId
+      if (typeof id !== 'string' || !id.trim()) return state
+      return { ...state, selectedCourtId: id }
+    }
+    case 'SET_COURTS': {
+      const courts = Array.isArray(action.payload?.courts) ? action.payload.courts : []
+      return { ...state, courts }
+    }
     case 'RESET_DEMO': {
       return makeInitialState()
     }
@@ -690,6 +708,14 @@ export function AppStateProvider({ children }) {
       })
     }
 
+    function setSelectedCourt({ courtId }) {
+      dispatch({ type: 'SET_SELECTED_COURT', payload: { courtId } })
+    }
+
+    function setCourts({ courts }) {
+      dispatch({ type: 'SET_COURTS', payload: { courts } })
+    }
+
     function resetDemo() {
       try {
         localStorage.removeItem(STORAGE_KEY)
@@ -722,6 +748,8 @@ export function AppStateProvider({ children }) {
       proposeResult,
       confirmResult,
       disputeResult,
+      setSelectedCourt,
+      setCourts,
       resetDemo,
     }
   }, [])

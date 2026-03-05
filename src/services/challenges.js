@@ -1,12 +1,19 @@
 import { supabase } from '../supabase/client.js'
 import { rpc, selectMany, selectSingle } from './supabaseFetch.js'
 
-export async function listMyChallenges({ categoryId, userId }) {
+/**
+ * Lista desafios do usuário em uma quadra + categoria.
+ * @param {string} courtId - UUID da quadra
+ * @param {string} categoryId - UUID da categoria
+ * @param {string} userId - UUID do usuário
+ */
+export async function listMyChallenges({ courtId, categoryId, userId }) {
   // RLS garante que o usuário só veja desafios onde é challenger/defender.
   return await selectMany(
     supabase
       .from('challenges')
-      .select('id,category_id,challenger_id,defender_id,status,created_at,expires_at,responded_at,completed_at')
+      .select('id,category_id,court_id,challenger_id,defender_id,status,created_at,expires_at,responded_at,completed_at')
+      .eq('court_id', courtId)
       .eq('category_id', categoryId)
       .or(`challenger_id.eq.${userId},defender_id.eq.${userId}`)
       .order('created_at', { ascending: false }),

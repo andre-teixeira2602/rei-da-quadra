@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { useI18n } from '../i18n/useI18n.js'
 import { useAppState } from '../state/AppState.jsx'
 import { supabase } from '../supabase/client.js'
+import CourtSwitcher from './CourtSwitcher.jsx'
 import CategorySwitcher from './CategorySwitcher.jsx'
 import DevUserSwitcher from './DevUserSwitcher.jsx'
 import LanguageSwitcher from './LanguageSwitcher.jsx'
@@ -61,6 +62,7 @@ export default function TopNav() {
           <div className="topNavRight">
             <LanguageSwitcher />
 
+            {auth?.isAuthenticated ? <CourtSwitcher /> : null}
             {auth?.isAuthenticated ? <CategorySwitcher /> : null}
 
             {import.meta.env.DEV && !auth.isAuthenticated && <DevUserSwitcher />}

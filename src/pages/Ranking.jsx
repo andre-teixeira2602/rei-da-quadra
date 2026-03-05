@@ -27,9 +27,10 @@ function isActiveMember(row) {
 
 export default function Ranking() {
   const { t } = useI18n()
-  const { auth, selectedCategoryId } = useAppState()
+  const { auth, selectedCategoryId, selectedCourtId } = useAppState()
   const navigate = useNavigate()
   const categoryId = selectedCategoryId
+  const courtId = selectedCourtId
 
   const [category, setCategory] = useState(null)
   const [rows, setRows] = useState([])
@@ -70,13 +71,14 @@ export default function Ranking() {
   async function refresh() {
     if (!auth?.isAuthenticated) return
     if (!categoryId) return
+    if (!courtId) return
 
     setLoading(true)
     setError('')
     try {
       const [cat, rank] = await Promise.all([
         getCategoryById(categoryId),
-        getRanking(categoryId),
+        getRanking(courtId, categoryId),
       ])
       setCategory(cat)
       setRows(rank ?? [])
@@ -91,7 +93,7 @@ export default function Ranking() {
   useEffect(() => {
     refresh()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth?.isAuthenticated, categoryId])
+  }, [auth?.isAuthenticated, categoryId, courtId])
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -235,7 +237,7 @@ export default function Ranking() {
                 onClick={async () => {
                   setToast(null)
                   try {
-                    await createChallenge(categoryId, modalTarget.user_id)
+                    await createChallenge(courtId, categoryId, modalTarget.user_id)
                     setModalTarget(null)
                     setToast({ message: t('ranking.toast.challengeCreated') })
                     navigate('/desafios', { replace: false, state: { message: t('ranking.toast.challengeCreated') } })

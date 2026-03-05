@@ -1,5 +1,5 @@
 import { supabase } from '../supabase/client.js'
-import { selectMany, getErrorMessage } from './supabaseFetch.js'
+import { selectMany, selectSingle, getErrorMessage } from './supabaseFetch.js'
 
 /**
  * Lista apenas quadras ativas (usado no formulário de registro de partidas).
@@ -23,6 +23,34 @@ export async function listAllCourts() {
       .from('courts')
       .select('id,name,city,address,surface,is_active,created_at,owner_id')
       .order('name', { ascending: true }),
+  )
+}
+
+/**
+ * Lista quadras públicas (diretório público).
+ * Usado na tela de seleção de quadras.
+ */
+export async function listPublicCourts() {
+  return await selectMany(
+    supabase
+      .from('courts')
+      .select('id,name,city,address,is_public,description,created_at')
+      .eq('is_public', true)
+      .eq('is_active', true)
+      .order('name', { ascending: true }),
+  )
+}
+
+/**
+ * Obtém detalhes de uma quadra específica.
+ */
+export async function getCourtById(courtId) {
+  return await selectSingle(
+    supabase
+      .from('courts')
+      .select('id,name,city,address,is_public,description,owner_id,created_at')
+      .eq('id', courtId),
+    'Quadra não encontrada.',
   )
 }
 

@@ -1,7 +1,13 @@
 import { supabase } from '../supabase/client.js'
 import { rpc, selectMany } from './supabaseFetch.js'
 
-export async function listMatchesByCategory({ categoryId, limit = 50 }) {
+/**
+ * Lista partidas de uma quadra + categoria.
+ * @param {string} courtId - UUID da quadra
+ * @param {string} categoryId - UUID da categoria
+ * @param {number} limit - Máximo de registros (padrão: 50)
+ */
+export async function listMatchesByCategory({ courtId, categoryId, limit = 50 }) {
   return await selectMany(
     supabase
       .from('matches')
@@ -10,6 +16,7 @@ export async function listMatchesByCategory({ categoryId, limit = 50 }) {
         'status,reported_by,confirmed_by,disputed_by,dispute_reason,reported_at,confirmed_at,disputed_at,' +
         'court:courts(id,name)',
       )
+      .eq('court_id', courtId)
       .eq('category_id', categoryId)
       .order('played_at', { ascending: false })
       .limit(limit),
@@ -20,14 +27,21 @@ export async function listMatchesByCategory({ categoryId, limit = 50 }) {
  * Registra uma partida usando o fluxo v2 (resultado fica "pending_confirmation"
  * até o adversário confirmar ou contestar).
  * Retorna o UUID da partida criada.
+ * @param {string} courtId - UUID da quadra
+ * @param {string} categoryId - UUID da categoria
+ * @param {string} challengeId - UUID do desafio
+ * @param {string} winnerId - UUID do vencedor
+ * @param {string} score - Placar (ex: "6-4 7-5")
+ * @param {string} playedAt - Data/hora da partida (ISO 8601)
  */
-export async function reportMatchV2({ challengeId, winnerId, score, playedAt, courtId }) {
+export async function reportMatchV2({ courtId, categoryId, challengeId, winnerId, score, playedAt }) {
   const result = await rpc('report_match_v2', {
+    p_court_id: courtId,
+    p_category_id: categoryId,
     p_challenge_id: challengeId,
     p_winner_id: winnerId,
     p_score: score ?? '',
     p_played_at: playedAt ?? null,
-    p_court_id: courtId ?? null,
   })
   return result
 }

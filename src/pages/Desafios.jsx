@@ -25,7 +25,7 @@ function isExpiredRow(c) {
 
 export default function Desafios() {
   const { t } = useI18n()
-  const { auth, selectedCategoryId } = useAppState()
+  const { auth, selectedCategoryId, selectedCourtId } = useAppState()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -40,15 +40,17 @@ export default function Desafios() {
 
   const userId = auth?.userId ?? null
   const categoryId = selectedCategoryId
+  const courtId = selectedCourtId
 
   async function refresh() {
     if (!userId) return
     if (!categoryId) return
+    if (!courtId) return
 
     setLoading(true)
     setError('')
     try {
-      const rows = await listMyChallenges({ categoryId, userId })
+      const rows = await listMyChallenges({ courtId, categoryId, userId })
       setChallenges(rows)
 
       const ids = []
@@ -67,7 +69,7 @@ export default function Desafios() {
   useEffect(() => {
     refresh()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, categoryId])
+  }, [userId, categoryId, courtId])
 
   const againstMe = useMemo(
     () => challenges.filter((c) => c.defender_id === userId),
