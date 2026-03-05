@@ -106,6 +106,9 @@ export const translations = {
     'courts.selectCourt': 'Selecionar',
     'courts.descriptionLabel': 'Descrição',
     'courts.descriptionPlaceholder': 'Ex: Quadra com iluminação noturna',
+    'courts.joinCourt': 'Entrar em Quadra',
+    'courts.joinSuccess': 'Bem-vindo à quadra! Você agora participa de todas as categorias.',
+    'courts.joinError': 'Não foi possível entrar na quadra.',
 
     // Categoria
     'category.label': 'Categoria',

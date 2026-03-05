@@ -94,3 +94,26 @@ export async function deactivateCourt({ id }) {
 
   if (error) throw new Error(getErrorMessage(error, 'Não foi possível desativar a quadra.'))
 }
+
+/**
+ * Usuário entra em uma quadra (join court).
+ * Insere registro em court_members e category_members para todas as categorias.
+ */
+export async function joinCourt(courtId) {
+  const { data, error } = await supabase.rpc('join_court', {
+    p_court_id: courtId,
+  })
+
+  if (error) throw new Error(getErrorMessage(error, 'Não foi possível entrar na quadra.'))
+  
+  if (data?.success === false) {
+    const errorMessages = {
+      'not_authenticated': 'Você precisa estar autenticado.',
+      'court_not_found': 'Quadra não encontrada.',
+      'already_member': 'Você já é membro desta quadra.',
+    }
+    throw new Error(errorMessages[data.error] || 'Erro ao entrar na quadra.')
+  }
+
+  return data
+}

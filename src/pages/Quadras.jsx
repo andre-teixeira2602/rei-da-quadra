@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n/useI18n.js'
 import { useAppState, useAppActions } from '../state/AppState.jsx'
-import { listPublicCourts, listAllCourts, createCourt, updateCourt, deactivateCourt } from '../services/courts.js'
+import { listPublicCourts, listAllCourts, createCourt, updateCourt, deactivateCourt, joinCourt } from '../services/courts.js'
 import { getErrorMessage } from '../services/supabaseFetch.js'
 import Card from '../design-system/components/Card/Card.jsx'
 import { SecondaryButton } from '../design-system/components/Button/Button.jsx'
@@ -92,6 +92,7 @@ export default function Quadras() {
   const [saving, setSaving] = useState(false)
 
   const [confirmDeactivate, setConfirmDeactivate] = useState(null)
+  const [joiningCourtId, setJoiningCourtId] = useState(null)
 
   async function loadPublicCourts() {
     setLoading(true)
@@ -202,6 +203,23 @@ export default function Quadras() {
 
   function handleSelectCourt(courtId) {
     setSelectedCourt({ courtId })
+  }
+
+  async function handleJoinCourt(courtId) {
+    setJoiningCourtId(courtId)
+    setToast(null)
+    try {
+      await joinCourt(courtId)
+      setToast({ kind: 'success', message: t('courts.joinSuccess') })
+      // Selecionar a quadra automaticamente após entrar
+      setSelectedCourt({ courtId })
+      // Recarregar quadras públicas
+      await loadPublicCourts()
+    } catch (e) {
+      setToast({ kind: 'error', message: getErrorMessage(e, t('courts.joinError')) })
+    } finally {
+      setJoiningCourtId(null)
+    }
   }
 
   const displayCourts = mode === 'public' ? publicCourts : allCourts
@@ -385,14 +403,27 @@ export default function Quadras() {
                     {court.surface && <p style={styles.courtMeta}>{surfaceLabel(court.surface)}</p>}
 
                     <div style={styles.rowActions}>
-                      <button
-                        type="button"
-                        className="arenaButton arenaButtonPrimary"
-                        onClick={() => handleSelectCourt(court.id)}
-                        style={{ fontSize: 12 }}
-                      >
-                        {t('courts.selectCourt')}
-                      </button>
+                      {mode === 'public' && (
+                        <button
+                          type="button"
+                          className="arenaButton arenaButtonPrimary"
+                          onClick={() => handleJoinCourt(court.id)}
+                          style={{ fontSize: 12 }}
+                          disabled={joiningCourtId === court.id}
+                        >
+                          {joiningCourtId === court.id ? t('common.loading') : t('courts.joinCourt')}
+                        </button>
+                      )}
+                      {mode === 'admin' && (
+                        <button
+                          type="button"
+                          className="arenaButton arenaButtonPrimary"
+                          onClick={() => handleSelectCourt(court.id)}
+                          style={{ fontSize: 12 }}
+                        >
+                          {t('courts.selectCourt')}
+                        </button>
+                      )}
 
                       {mode === 'admin' && (
                         <>
