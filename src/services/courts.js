@@ -21,7 +21,7 @@ export async function listAllCourts() {
   return await selectMany(
     supabase
       .from('courts')
-      .select('id,name,city,address,surface,is_active,created_at,owner_id')
+      .select('id,name,city,address,is_public,description,is_active,created_at,owner_id')
       .order('name', { ascending: true }),
   )
 }
@@ -57,11 +57,11 @@ export async function getCourtById(courtId) {
 /**
  * Cria uma nova quadra.
  */
-export async function createCourt({ name, city, address, surface }) {
+export async function createCourt({ name, city, address, description, is_public }) {
   const { data, error } = await supabase
     .from('courts')
-    .insert([{ name: name.trim(), city: city?.trim() || null, address: address?.trim() || null, surface: surface || null, is_active: true }])
-    .select('id,name,city,address,surface,is_active,created_at')
+    .insert([{ name: name.trim(), city: city?.trim() || null, address: address?.trim() || null, description: description?.trim() || null, is_public: is_public !== false, is_active: true }])
+    .select('id,name,city,address,description,is_public,is_active,created_at')
     .single()
 
   if (error) throw new Error(getErrorMessage(error, 'Não foi possível criar a quadra.'))
@@ -71,12 +71,12 @@ export async function createCourt({ name, city, address, surface }) {
 /**
  * Atualiza os dados de uma quadra existente.
  */
-export async function updateCourt({ id, name, city, address, surface, is_active }) {
+export async function updateCourt({ id, name, city, address, description, is_public, is_active }) {
   const { data, error } = await supabase
     .from('courts')
-    .update({ name: name.trim(), city: city?.trim() || null, address: address?.trim() || null, surface: surface || null, is_active })
+    .update({ name: name.trim(), city: city?.trim() || null, address: address?.trim() || null, description: description?.trim() || null, is_public, is_active })
     .eq('id', id)
-    .select('id,name,city,address,surface,is_active,created_at')
+    .select('id,name,city,address,description,is_public,is_active,created_at')
     .single()
 
   if (error) throw new Error(getErrorMessage(error, 'Não foi possível atualizar a quadra.'))

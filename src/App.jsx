@@ -15,6 +15,7 @@ import Login from './pages/Login'
 import Perfil from './pages/Perfil'
 import RecordMatchPage from './features/matches/pages/RecordMatchPage'
 import Quadras from './pages/Quadras'
+import SignUp from './pages/SignUp'
 
 import { useAppActions, useAppState } from './state/AppState'
 import { getMyProfile } from './services/profiles'
@@ -104,6 +105,7 @@ export default function App() {
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/rei" element={<Rei />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
 
           <Route path="/challenge" element={<Navigate to="/desafios" replace />} />
           <Route path="/history" element={<Navigate to="/partidas" replace />} />

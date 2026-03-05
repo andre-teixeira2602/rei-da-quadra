@@ -123,7 +123,7 @@ export default function Login() {
                   <button type="button" className="rqLinkButton" onClick={() => setToast({ message: t('common.soon') })}>
                     {t('login.forgotPassword')}
                   </button>
-                  <button type="button" className="rqLinkButton" onClick={() => setToast({ message: t('common.soon') })}>
+                  <button type="button" className="rqLinkButton" onClick={() => navigate('/signup')}>
                     {t('login.createAccount')}
                   </button>
                 </div>

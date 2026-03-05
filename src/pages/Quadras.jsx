@@ -6,7 +6,7 @@ import { getErrorMessage } from '../services/supabaseFetch.js'
 import Card from '../design-system/components/Card/Card.jsx'
 import { SecondaryButton } from '../design-system/components/Button/Button.jsx'
 
-const SURFACES = ['hard', 'clay', 'grass', 'carpet', 'synthetic']
+
 
 const styles = {
   page: { display: 'grid', gap: 16 },
@@ -71,7 +71,7 @@ const styles = {
   },
 }
 
-const EMPTY_FORM = { name: '', city: '', address: '', surface: '', description: '' }
+const EMPTY_FORM = { name: '', city: '', address: '', description: '', is_public: true }
 
 export default function Quadras() {
   const { t } = useI18n()
@@ -145,8 +145,8 @@ export default function Quadras() {
       name: court.name || '',
       city: court.city || '',
       address: court.address || '',
-      surface: court.surface || '',
       description: court.description || '',
+      is_public: court.is_public !== false,
     })
     setShowForm(true)
     setToast(null)
@@ -208,17 +208,7 @@ export default function Quadras() {
   const activeCourts = displayCourts.filter((c) => c.is_active)
   const inactiveCourts = displayCourts.filter((c) => !c.is_active)
 
-  function surfaceLabel(s) {
-    if (!s) return null
-    const map = {
-      hard: t('courts.surfaceHard'),
-      clay: t('courts.surfaceClay'),
-      grass: t('courts.surfaceGrass'),
-      carpet: t('courts.surfaceCarpet'),
-      synthetic: t('courts.surfaceSynthetic'),
-    }
-    return map[s] || s
-  }
+
 
   return (
     <div className="rq-container rq-grid-gap" style={styles.page}>
@@ -343,22 +333,7 @@ export default function Quadras() {
               />
             </label>
 
-            <label style={styles.field}>
-              <span>{t('courts.surfaceLabel')}</span>
-              <select
-                style={styles.select}
-                value={form.surface}
-                onChange={(e) => setForm((f) => ({ ...f, surface: e.target.value }))}
-                disabled={saving}
-              >
-                <option value="">{t('courts.surfaceNone')}</option>
-                {SURFACES.map((s) => (
-                  <option key={s} value={s}>
-                    {surfaceLabel(s)}
-                  </option>
-                ))}
-              </select>
-            </label>
+
 
             <div style={styles.rowActions}>
               <button type="submit" className="arenaButton arenaButtonPrimary" disabled={saving}>
