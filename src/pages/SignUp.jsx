@@ -54,33 +54,21 @@ export default function SignUp() {
 
     setLoading(true)
     try {
-      // Criar usuário no Supabase Auth
+      // Criar usuário no Supabase Auth (o trigger handle_new_user cria o perfil automaticamente)
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: normalizedEmail,
         password: password.trim(),
+        options: {
+          data: {
+            display_name: displayName.trim() || normalizedEmail.split('@')[0],
+          },
+        },
       })
 
       if (signUpError) {
         setToast({ kind: 'error', message: signUpError.message ?? t('signup.signUpError') })
         setLoading(false)
         return
-      }
-
-      // Criar perfil do usuário
-      if (data.user) {
-        const { error: profileError } = await supabase.from('profiles').insert([
-          {
-            id: data.user.id,
-            email: normalizedEmail,
-            display_name: displayName.trim() || normalizedEmail.split('@')[0],
-          },
-        ])
-
-        if (profileError) {
-          setToast({ kind: 'error', message: profileError.message ?? t('signup.profileError') })
-          setLoading(false)
-          return
-        }
       }
 
       setToast({ kind: 'success', message: t('signup.signUpSuccess') })
