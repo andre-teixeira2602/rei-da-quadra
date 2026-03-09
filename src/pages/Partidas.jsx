@@ -548,7 +548,7 @@ export default function Partidas() {
             const loser = profilesById.get(m.loser_id)
             const courtName = m?.court?.name ?? null
 
-            const isPending = m.status === 'pending_confirm'
+            const isPending = m.status === 'pending_confirmation' || m.status === 'pending_confirm'
             const isConfirmed = m.status === 'confirmed'
             const isDisputed = m.status === 'disputed'
             const currentUserId = auth?.user?.id
