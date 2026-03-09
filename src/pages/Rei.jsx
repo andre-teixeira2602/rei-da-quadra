@@ -14,8 +14,9 @@ import './rei.css'
 
 export default function Rei() {
   const { t } = useI18n()
-  const { auth, selectedCategoryId } = useAppState()
+  const { auth, selectedCategoryId, selectedCourtId } = useAppState()
   const categoryId = selectedCategoryId
+  const courtId = selectedCourtId
 
   const [category, setCategory] = useState(null)
   const [kingRow, setKingRow] = useState(null)
@@ -26,13 +27,14 @@ export default function Rei() {
   async function refresh() {
     if (!auth?.isAuthenticated) return
     if (!categoryId) return
+    if (!courtId) return
 
     setLoading(true)
     setError('')
     try {
       const [cat, ranking] = await Promise.all([
         getCategoryById(categoryId),
-        getRanking(categoryId),
+        getRanking(courtId, categoryId),
       ])
 
       setCategory(cat)
@@ -53,7 +55,7 @@ export default function Rei() {
   useEffect(() => {
     refresh()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth?.isAuthenticated, categoryId])
+  }, [auth?.isAuthenticated, categoryId, courtId])
 
   const kingLabel = useMemo(() => {
     if (!kingRow) return '—'
